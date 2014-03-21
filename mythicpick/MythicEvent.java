@@ -10,83 +10,89 @@ public class MythicEvent {
 		System.out.println("Mythic pick");
 		Random rand = new Random();
 
-		System.out.println("Choose roll:");
-		System.out.println("1: Random event");
-		System.out.println("2: Modify the scene");
-		System.out.println("3: Yes/No question");
-
 		Scanner scanIn = new Scanner(System.in);
-		int choice;
-		try {
-			choice = Integer.parseInt(scanIn.nextLine());
-		} catch (NumberFormatException e) {
-			choice = 1;
-		}
+		int choice = 0;
+		while (choice != 4) {
+			System.out.println("Choose roll:");
+			System.out.println("1: Random event");
+			System.out.println("2: Modify the scene");
+			System.out.println("3: Yes/No question");
+			System.out.println("4: Quit");
 
-		if (choice < 1 || choice > 3) choice = 1;
-		int chaos = 5;
-		if (choice == 2 || choice == 3) {
-
-			System.out.println("Chaos factor (1-9): ");
 			try {
-				chaos = Integer.parseInt(scanIn.nextLine());
+				choice = Integer.parseInt(scanIn.nextLine());
 			} catch (NumberFormatException e) {
-				chaos = 5;
+				choice = 1;
 			}
-		}
 
-		if (choice == 1) {
-			printRandomEvent(rand);
-		}
+			if (choice < 1 || choice > 4) choice = 1;
+			int chaos = 5;
+			if (choice == 2 || choice == 3) {
 
-		if (choice == 2) {
-			System.out.println();
-			int sceneChange = rand.nextInt(9) + 1;
-			System.out.println("ROLL " + String.valueOf(sceneChange));
-			if (sceneChange <= chaos) {
-				if (sceneChange % 2 == 0) {
-					System.out.println("INTERRUPT scene");
+				System.out.println("Chaos factor (1-9): ");
+				try {
+					chaos = Integer.parseInt(scanIn.nextLine());
+				} catch (NumberFormatException e) {
+					chaos = 5;
+				}
+			}
+
+			if (choice == 1) {
+				printRandomEvent(rand);
+			}
+
+			if (choice == 2) {
+				System.out.println();
+				int sceneChange = rand.nextInt(9) + 1;
+				System.out.println("ROLL " + String.valueOf(sceneChange));
+				if (sceneChange <= chaos) {
+					if (sceneChange % 2 == 0) {
+						System.out.println("INTERRUPT scene");
+					} else {
+						System.out.println("ALTERED scene");
+					}
+
+					printRandomEvent(rand);
 				} else {
-					System.out.println("ALTERED scene");
+					System.out.println("no change");
+				System.out.println();
+				}
+			}
+
+			if (choice == 3) {
+				System.out.println();
+				System.out.println("Ask a yes/no question: ");
+				String question;
+				question = scanIn.nextLine();
+
+				System.out.println();
+				System.out.println("Choose the odds:");
+				ArrayList<String> odds = getFateOdds();
+				int i = 0;
+				for (String odd : odds) {
+					System.out.println(String.valueOf(i) + ": " + odd);
+					i++;
 				}
 
-				printRandomEvent(rand);
-			} else {
-				System.out.println("no change");
-			}
-		}
+				int odd;
+				try
+				{
+					odd = Integer.parseInt(scanIn.nextLine());
+				} catch (NumberFormatException e) {
+					odd = 4;
+				}
 
-		if (choice == 3) {
-			System.out.println();
-			System.out.println("Ask a yes/no question: ");
-			String question;
-			question = scanIn.nextLine();
-
-			System.out.println();
-			System.out.println("Choose the odds:");
-			ArrayList<String> odds = getFateOdds();
-			int i = 0;
-			for (String odd : odds) {
-				System.out.println(String.valueOf(i) + ": " + odd);
-				i++;
-			}
-
-			int odd;
-			try
-			{
-				odd = Integer.parseInt(scanIn.nextLine());
-			} catch (NumberFormatException e) {
-				odd = 4;
-			}
-
-			System.out.println();
-			int fateChartRoll = rand.nextInt(100);
-			String strFate = String.valueOf(fateChartRoll);
-			System.out.println("ROLL " + strFate);
-			fateRoll(chaos, odd, fateChartRoll);
-			if (strFate.length() > 1 && strFate.charAt(0) == strFate.charAt(1)) {
-				System.out.println(strFate + ": FATE chart random event!!");
-				printRandomEvent(rand);
+				System.out.println();
+				int fateChartRoll = rand.nextInt(100);
+				String strFate = String.valueOf(fateChartRoll);
+				System.out.println("ROLL " + strFate);
+				fateRoll(chaos, odd, fateChartRoll);
+				if (strFate.length() > 1 && strFate.charAt(0) == strFate.charAt(1)) {
+					System.out.println(strFate + ": FATE chart random event!!");
+					printRandomEvent(rand);
+				} else {
+					System.out.println();
+				}
 			}
 		}
 
