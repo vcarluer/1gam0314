@@ -42,7 +42,6 @@ public class MythicEvent {
 		if (choice == 2) {
 			System.out.println();
 			int sceneChange = rand.nextInt(9) + 1;
-			System.out.println("Start SCENE roll");
 			System.out.println("ROLL " + String.valueOf(sceneChange));
 			if (sceneChange <= chaos) {
 				if (sceneChange % 2 == 0) {
