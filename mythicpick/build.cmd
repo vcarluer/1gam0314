@@ -1,0 +1,1 @@
+javac .\MythicEvent.java -d .\
