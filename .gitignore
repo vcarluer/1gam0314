@@ -4,7 +4,6 @@
 *.class
 
 # Package Files #
-*.jar
 *.war
 
 # gwt caches and compiled units #
@@ -34,7 +33,6 @@ www-test/
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.ear
 
