@@ -9,7 +9,10 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Array;
 
 public class Aitrinity implements ApplicationListener {
 	private OrthographicCamera camera;
@@ -18,9 +21,11 @@ public class Aitrinity implements ApplicationListener {
 	private Sprite sprite;
 	private int activateCols = 8;
 	private int activateCount = 6;
-	private TextureRegion[]	activateFrames;
+	private Array<AtlasRegion>	activateFrames;
 	private Animation activateAnimation;
 	private float stateTime;
+	
+	private TextureAtlas atlas;
 	
 	@Override
 	public void create() {		
@@ -31,7 +36,7 @@ public class Aitrinity implements ApplicationListener {
 		camera.zoom = 0.5f;
 		camera.update();
 		batch = new SpriteBatch();
-		
+		/*
 		texture = new Texture(Gdx.files.internal("data/anim_activate.png"));
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
@@ -41,8 +46,14 @@ public class Aitrinity implements ApplicationListener {
 			activateFrames[i] = tmp[0][i];
 		}
 				
-		activateAnimation = new Animation(0.1f, activateFrames);
+		*/
 		stateTime = 0f;
+		
+		// second method
+		atlas = new TextureAtlas(Gdx.files.internal("data/activate1.atlas"));
+		activateFrames = atlas.getRegions();
+		
+		activateAnimation = new Animation(0.1f, activateFrames);
 		
 //		TextureRegion region = new TextureRegion(texture, 0, 0, 256, 64);
 //		
@@ -55,7 +66,7 @@ public class Aitrinity implements ApplicationListener {
 	@Override
 	public void dispose() {
 		batch.dispose();
-		texture.dispose();
+		// texture.dispose();
 	}
 
 	@Override
