@@ -2,11 +2,13 @@ package gamers.associate;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -26,6 +28,7 @@ public class Aitrinity implements ApplicationListener {
 	private float stateTime;
 	
 	private TextureAtlas atlas;
+	private BitmapFont font;
 	
 	@Override
 	public void create() {		
@@ -55,6 +58,9 @@ public class Aitrinity implements ApplicationListener {
 		
 		activateAnimation = new Animation(0.1f, activateFrames);
 		
+		font = new BitmapFont(Gdx.files.internal("data/04b03.fnt"), Gdx.files.internal("data/04b03.png"), false);
+		font.setColor(Color.BLACK);
+		
 //		TextureRegion region = new TextureRegion(texture, 0, 0, 256, 64);
 //		
 //		sprite = new Sprite(region);
@@ -80,7 +86,8 @@ public class Aitrinity implements ApplicationListener {
 		stateTime += Gdx.graphics.getDeltaTime();
 		TextureRegion texture = activateAnimation.getKeyFrame(stateTime, true);
 		batch.draw(texture, -texture.getRegionWidth() / 2f, -texture.getRegionHeight() / 2f);
-		batch.end();
+		font.draw(batch, "Yop", 0, 0);
+		batch.end();		
 	}
 
 	@Override
