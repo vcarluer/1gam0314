@@ -7,7 +7,15 @@ import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenAccessor;
 import aurelienribon.tweenengine.TweenCallback;
+import aurelienribon.tweenengine.TweenEquation;
 import aurelienribon.tweenengine.TweenManager;
+import aurelienribon.tweenengine.equations.Bounce;
+import aurelienribon.tweenengine.equations.Circ;
+import aurelienribon.tweenengine.equations.Elastic;
+import aurelienribon.tweenengine.equations.Expo;
+import aurelienribon.tweenengine.equations.Linear;
+import aurelienribon.tweenengine.equations.Quad;
+import aurelienribon.tweenengine.equations.Sine;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -28,18 +36,22 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 public class Aitrinity implements ApplicationListener, InputProcessor, TweenAccessor<Aitrinity> {
 	private OrthographicCamera camera;
 	private SpriteBatch batch;
-	private Texture texture;
 	private Sprite sprite;
 	private int activateCols = 8;
 	private int activateCount = 6;
 	private Array<AtlasRegion>	activateFrames;
 	private Animation activateAnimation;
 	private float stateTime;
+	private ShapeRenderer shapeRenderer;
 	
 	private TextureAtlas atlas;
 	private BitmapFont font;
@@ -59,6 +71,14 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private float zoom = 0.5f;
 	
 	private boolean move;
+	private int fontSize = 10;
+	
+	private float sayLife = 1f;
+	private String sayText;
+	private float sayTime;
+	
+	private float speed = 300;
+	
 	@Override
 	public void create() {		
 		float w = Gdx.graphics.getWidth();
@@ -89,8 +109,8 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		
 		// font = new BitmapFont(Gdx.files.internal("data/04b03.fnt"), Gdx.files.internal("data/04b03.png"), false);
 		fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("data/04b03.ttf"));
-		font = fontGenerator.generateFont(20);
-		font.setColor(Color.GREEN);
+		font = fontGenerator.generateFont(fontSize);
+		font.setColor(Color.BLACK);
 		
 		effects = new ArrayList<PooledEffect>();
 		ParticleEffect prototype = new ParticleEffect();
@@ -101,6 +121,9 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		
 		tweenManager = new TweenManager();
 		Tween.registerAccessor(Aitrinity.class, this);
+		
+		shapeRenderer = new ShapeRenderer();
+		shapeRenderer.setColor(Color.GREEN);
 		
 //		TextureRegion region = new TextureRegion(texture, 0, 0, 256, 64);
 //		
@@ -116,6 +139,8 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		// texture.dispose();
 	}
 
+	TextureRegion texturePlayer;
+	
 	@Override
 	public void render() {		
 		Gdx.gl.glClearColor(0, 0, 0, 0);
@@ -127,9 +152,19 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		float delta = Gdx.graphics.getDeltaTime();
 		tweenManager.update(delta);
 		stateTime += delta;
-		TextureRegion texture = activateAnimation.getKeyFrame(stateTime, true);
+		texturePlayer = activateAnimation.getKeyFrame(stateTime, true);
 		
-		font.draw(batch, "Waazzaaaaaa!", 0, 0);
+		batch.end();
+		if (sayText != null) {
+			sayTime += delta;
+			if (sayTime < sayLife) {
+				say(sayText);
+			} else {
+				sayText = null;
+			}
+		}
+		
+		batch.begin();
 		for(PooledEffect effect : effects) {
 			effect.setPosition(x, y);
 			effect.draw(batch, delta);
@@ -140,10 +175,37 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		}
 		
 		if (!move) {
-			batch.draw(texture, x-texture.getRegionWidth() / 2f, y-texture.getRegionHeight() / 2f);
+			batch.draw(texturePlayer, x-texturePlayer.getRegionWidth() / 2f, y-texturePlayer.getRegionHeight() / 2f);
 		}
 		
-		batch.end();		
+		batch.end();	
+	}
+	
+	private void say(String text) {
+		float sayX = x + texturePlayer.getRegionWidth() / 4f;
+		float sayY = y + texturePlayer.getRegionHeight() / 2f;
+		float padding = 5;
+		float paddingIn = 4;
+		float sayWidth = text.length() * fontSize;
+		float sayHeight = fontSize;
+		shapeRenderer.setProjectionMatrix(camera.combined);
+		
+		shapeRenderer.begin(ShapeType.Filled);
+		
+		shapeRenderer.setColor(Color.GREEN);
+		shapeRenderer.rect(sayX - padding, sayY-padding, sayWidth + padding * 2, sayHeight + padding * 2);
+		shapeRenderer.setColor(Color.WHITE);
+		shapeRenderer.rect(sayX - paddingIn, sayY-paddingIn, sayWidth + paddingIn * 2, sayHeight + paddingIn * 2);
+		shapeRenderer.end();
+		font.setColor(Color.BLACK);
+		batch.begin();
+		font.draw(batch, text, sayX, sayY + sayHeight * 3 / 4);
+		batch.end();
+	}
+	
+	private void setSay(String text) {
+		sayText = text;
+		sayTime = 0;
 	}
 
 	@Override
@@ -184,32 +246,40 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		targetX = (screenX - Gdx.graphics.getWidth() / 2) * zoom;
-		targetY = (Gdx.graphics.getHeight() / 2f - screenY) * zoom;
-		Timeline.createSequence()
-			.push(Tween.call(new TweenCallback() {
-				
-				@Override
-				public void onEvent(int type, BaseTween<?> source) {
-					move = true;
-					PooledEffect effect = pool.obtain();
-					effects.add(effect);
-				}
-			}))
-			.push(Tween.to(this, 0, 1.0f).target(targetX, targetY).start(tweenManager))
-			.push(Tween.call(new TweenCallback() {
-				
-				@Override
-				public void onEvent(int type, BaseTween<?> source) {
-					for (PooledEffect effect : effects) {
-						effect.free();						
-					}
+		if (!move) {
+			targetX = (screenX - Gdx.graphics.getWidth() / 2) * zoom;
+			targetY = (Gdx.graphics.getHeight() / 2f - screenY) * zoom;
+			Vector2 pos = new Vector2(x, y);
+			Vector2 target = new Vector2(targetX, targetY);
+			float length = target.sub(pos).len();
+			float time = length / speed;
+			Timeline.createSequence()
+				.push(Tween.call(new TweenCallback() {
 					
-					effects.clear();
-					move = false;
-				}
-			}))
-			.start(tweenManager);
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						move = true;
+						sayText = null;
+						PooledEffect effect = pool.obtain();
+						effects.add(effect);
+					}
+				}))
+				.push(Tween.to(this, 0, time).target(targetX, targetY))
+				.push(Tween.call(new TweenCallback() {
+					
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						for (PooledEffect effect : effects) {
+							effect.free();						
+						}
+						
+						effects.clear();
+						move = false;
+						setSay("Waazzaaaaaaa");
+					}
+				}))
+				.start(tweenManager);
+		}
 		return true;
 	}
 
