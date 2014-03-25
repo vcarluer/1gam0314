@@ -40,6 +40,8 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private SpriteBatch batch;
 	private Array<AtlasRegion>	activateFrames;
 	private Animation activateAnimation;
+	private Array<AtlasRegion> ia1Frames;
+	private Animation ia1Animation;
 	private float stateTime;
 	private ShapeRenderer shapeRenderer;
 	
@@ -83,6 +85,9 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private HashSet<Vector2> passable;
 	private Vector2 testV;
 	
+	private float ia1x;
+	private float ia1y;
+	
 	@Override
 	public void create() {		
 		passable = new HashSet<Vector2>();
@@ -93,6 +98,9 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		
 		x = worldCoord(3);
 		y = worldCoord(3);
+		
+		ia1x = worldCoord(9);
+		ia1y = worldCoord(12);
 		
 		camera = new OrthographicCamera(w, h);
 		camX = (w / 2f) * zoom;
@@ -107,7 +115,10 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		atlas = new TextureAtlas(Gdx.files.internal("data/pack.atlas"));
 		activateFrames = atlas.findRegions("player/idle");
 		
-		activateAnimation = new Animation(0.1f, activateFrames);
+		activateAnimation = new Animation(0.12f, activateFrames);
+		
+		ia1Frames = atlas.findRegions("ia1/activate");
+		ia1Animation = new Animation(0.12f, ia1Frames);
 		
 		fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("data/04b03.ttf"));
 		font = fontGenerator.generateFont(fontSize);
@@ -201,6 +212,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		tweenManager.update(delta);
 		stateTime += delta;
 		texturePlayer = activateAnimation.getKeyFrame(stateTime, true);
+		TextureRegion textureIa1 = ia1Animation.getKeyFrame(stateTime, true);
 		
 		for(PooledEffect effect : effects) {
 			effect.setPosition(x, y+texturePlayer.getRegionHeight() / 2f);
@@ -211,7 +223,20 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			}
 		}
 		
-		batch.end();
+		if (ia1y > y) {
+			batch.draw(textureIa1, ia1x-textureIa1.getRegionWidth() / 2f, ia1y);
+		}
+		
+		if (!move) {
+			batch.draw(texturePlayer, x-texturePlayer.getRegionWidth() / 2f, y);
+		}
+		
+		if (ia1y <= y) {
+			batch.draw(textureIa1, ia1x-textureIa1.getRegionWidth() / 2f, ia1y);
+		}
+		
+		batch.end();	
+		
 		if (sayText != null) {
 			sayTime += delta;
 			if (sayTime < sayLife) {
@@ -221,22 +246,20 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			}
 		}
 		
-		batch.begin();
-		
-		if (!move) {
-			batch.draw(texturePlayer, x-texturePlayer.getRegionWidth() / 2f, y);
-		}
-		
-		batch.end();	
+		say("tg", textureIa1, ia1x, ia1y);
 	}
 	
 	private void say(String text) {
-		float sayX = x + texturePlayer.getRegionWidth() / 4f;
-		float sayY = y + texturePlayer.getRegionHeight();
+		say(text, texturePlayer, x, y);
+	}
+	
+	private void say(String text, TextureRegion texture, float x, float y) {
+		float sayX = x + texture.getRegionWidth() / 4f;
+		float sayY = y + texture.getRegionHeight();
 		float padding = 5;
 		float paddingIn = 4;
-		float sayWidth = text.length() * fontSize;
-		float sayHeight = fontSize;
+		float sayWidth = font.getBounds(text).width;
+		float sayHeight = font.getBounds(text).height;
 		shapeRenderer.setProjectionMatrix(camera.combined);
 		
 		shapeRenderer.begin(ShapeType.Filled);
@@ -248,7 +271,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		shapeRenderer.end();
 		font.setColor(new Color(0.06f, 0.3f, 0, 1));
 		batch.begin();
-		font.draw(batch, text, sayX, sayY + sayHeight * 3 / 4);
+		font.draw(batch, text, sayX, sayY + sayHeight);
 		batch.end();
 	}
 	
