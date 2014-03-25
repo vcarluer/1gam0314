@@ -8,4 +8,6 @@
 	<classpathentry kind="lib" path="libs/gdx-backend-lwjgl.jar" sourcepath="libs/gdx-backend-lwjgl-sources.jar"/>
 	<classpathentry kind="lib" path="libs/gdx-backend-lwjgl-natives.jar"/>
 	<classpathentry kind="lib" path="libs/gdx-natives.jar"/>
+	<classpathentry kind="lib" exported="true" path="libs/gdx-freetype.jar" sourcepath="libs/gdx-freetype-sources.jar" />
+	<classpathentry kind="lib" exported="true" path="libs/gdx-freetype-natives.jar" />
 </classpath>

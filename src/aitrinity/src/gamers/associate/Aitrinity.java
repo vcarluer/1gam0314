@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.Array;
 
 public class Aitrinity implements ApplicationListener {
@@ -29,6 +30,8 @@ public class Aitrinity implements ApplicationListener {
 	
 	private TextureAtlas atlas;
 	private BitmapFont font;
+	
+	private FreeTypeFontGenerator fontGenerator;
 	
 	@Override
 	public void create() {		
@@ -58,7 +61,9 @@ public class Aitrinity implements ApplicationListener {
 		
 		activateAnimation = new Animation(0.1f, activateFrames);
 		
-		font = new BitmapFont(Gdx.files.internal("data/04b03.fnt"), Gdx.files.internal("data/04b03.png"), false);
+		// font = new BitmapFont(Gdx.files.internal("data/04b03.fnt"), Gdx.files.internal("data/04b03.png"), false);
+		fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("data/04b03.ttf"));
+		font = fontGenerator.generateFont(20);
 		font.setColor(Color.BLACK);
 		
 //		TextureRegion region = new TextureRegion(texture, 0, 0, 256, 64);

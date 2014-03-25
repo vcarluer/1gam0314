@@ -8,6 +8,7 @@
 	<classpathentry exported="true" kind="lib" path="/aitrinity/libs/gdx.jar" sourcepath="/aitrinity/libs/gdx-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/gdx-backend-android.jar" sourcepath="libs/gdx-backend-android-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="/aitrinity/libs/tween-engine-api.jar" sourcepath="/aitrinity/libs/tween-engine-api-sources.jar"/>
+	<classpathentry kind="lib" exported="true" path="libs/gdx-freetype.jar" sourcepath="libs/gdx-freetype-sources.jar" />
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

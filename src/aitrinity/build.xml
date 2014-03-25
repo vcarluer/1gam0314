@@ -16,6 +16,7 @@
         <pathelement location="bin"/>
         <pathelement location="libs/gdx.jar"/>
         <pathelement location="libs/tween-engine-api.jar"/>
+        <pathelement location="libs/gdx-freetype.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>

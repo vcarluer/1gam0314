@@ -15,6 +15,7 @@
         <pathelement location="${aitrinity.location}/bin"/>
         <pathelement location="${aitrinity.location}/libs/gdx.jar"/>
         <pathelement location="${aitrinity.location}/libs/tween-engine-api.jar"/>
+        <pathelement location="${aitrinity.location}/libs/gdx-freetype.jar"/>
     </path>
     <path id="aitrinity-desktop.classpath">
         <pathelement location="bin"/>
@@ -22,6 +23,7 @@
         <pathelement location="libs/gdx-backend-lwjgl.jar"/>
         <pathelement location="libs/gdx-backend-lwjgl-natives.jar"/>
         <pathelement location="libs/gdx-natives.jar"/>
+        <pathelement location="libs/gdx-freetype-natives.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
