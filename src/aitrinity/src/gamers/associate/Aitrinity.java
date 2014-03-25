@@ -2,8 +2,16 @@ package gamers.associate;
 
 import java.util.ArrayList;
 
+import aurelienribon.tweenengine.BaseTween;
+import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenAccessor;
+import aurelienribon.tweenengine.TweenCallback;
+import aurelienribon.tweenengine.TweenManager;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -22,7 +30,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.Array;
 
-public class Aitrinity implements ApplicationListener {
+public class Aitrinity implements ApplicationListener, InputProcessor, TweenAccessor<Aitrinity> {
 	private OrthographicCamera camera;
 	private SpriteBatch batch;
 	private Texture texture;
@@ -41,14 +49,23 @@ public class Aitrinity implements ApplicationListener {
 	private ParticleEffectPool pool;
 	private ArrayList<PooledEffect> effects;
 	
+	public float x;
+	public float y;
 	
+	private float targetX;
+	private float targetY;
+	
+	private TweenManager tweenManager;
+	private float zoom = 0.5f;
+	
+	private boolean move;
 	@Override
 	public void create() {		
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 		
 		camera = new OrthographicCamera(w, h);
-		camera.zoom = 0.5f;
+		camera.zoom = zoom;
 		camera.update();
 		batch = new SpriteBatch();
 		/*
@@ -80,9 +97,10 @@ public class Aitrinity implements ApplicationListener {
 		prototype.load(Gdx.files.internal("data/zerogreen2.p"), atlas);
 		pool = new ParticleEffectPool(prototype, 1, 2);
 		
-		PooledEffect effect = pool.obtain();
-		effects.add(effect);
+		Gdx.input.setInputProcessor(this);
 		
+		tweenManager = new TweenManager();
+		Tween.registerAccessor(Aitrinity.class, this);
 		
 //		TextureRegion region = new TextureRegion(texture, 0, 0, 256, 64);
 //		
@@ -107,12 +125,22 @@ public class Aitrinity implements ApplicationListener {
 		batch.begin();
 		// sprite.draw(batch);
 		float delta = Gdx.graphics.getDeltaTime();
+		tweenManager.update(delta);
 		stateTime += delta;
 		TextureRegion texture = activateAnimation.getKeyFrame(stateTime, true);
-		batch.draw(texture, -texture.getRegionWidth() / 2f, -texture.getRegionHeight() / 2f);
-		font.draw(batch, "Yop", 0, 0);
+		
+		font.draw(batch, "Waazzaaaaaa!", 0, 0);
 		for(PooledEffect effect : effects) {
+			effect.setPosition(x, y);
 			effect.draw(batch, delta);
+			if (effect.isComplete()) {
+				effect.free();
+				effects.remove(effect);
+			}
+		}
+		
+		if (!move) {
+			batch.draw(texture, x-texture.getRegionWidth() / 2f, y-texture.getRegionHeight() / 2f);
 		}
 		
 		batch.end();		
@@ -128,5 +156,91 @@ public class Aitrinity implements ApplicationListener {
 
 	@Override
 	public void resume() {
+	}
+
+	@Override
+	public boolean keyDown(int keycode) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean keyUp(int keycode) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean keyTyped(char character) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		targetX = (screenX - Gdx.graphics.getWidth() / 2) * zoom;
+		targetY = (Gdx.graphics.getHeight() / 2f - screenY) * zoom;
+		Timeline.createSequence()
+			.push(Tween.call(new TweenCallback() {
+				
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					move = true;
+					PooledEffect effect = pool.obtain();
+					effects.add(effect);
+				}
+			}))
+			.push(Tween.to(this, 0, 1.0f).target(targetX, targetY).start(tweenManager))
+			.push(Tween.call(new TweenCallback() {
+				
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					for (PooledEffect effect : effects) {
+						effect.free();						
+					}
+					
+					effects.clear();
+					move = false;
+				}
+			}))
+			.start(tweenManager);
+		return true;
+	}
+
+	@Override
+	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean mouseMoved(int screenX, int screenY) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean scrolled(int amount) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public int getValues(Aitrinity target, int tweenType, float[] returnValues) {
+		returnValues[0] = target.x;
+		returnValues[1] = target.y;
+		return 2;
+	}
+
+	@Override
+	public void setValues(Aitrinity target, int tweenType, float[] newValues) {
+		target.x = newValues[0];
+		target.y = newValues[1];
 	}
 }

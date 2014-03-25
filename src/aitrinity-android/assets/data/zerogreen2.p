@@ -55,8 +55,8 @@ timeline6: 0.89041096
 active: false
 - X Offset - 
 active: true
-lowMin: 0.0
-lowMax: 75.0
+lowMin: -5.0
+lowMax: 5.0
 highMin: 0.0
 highMax: 0.0
 relative: false
@@ -66,8 +66,8 @@ timelineCount: 1
 timeline0: 0.0
 - Y Offset - 
 active: true
-lowMin: -100.0
-lowMax: 100.0
+lowMin: -25.0
+lowMax: 25.0
 highMin: 0.0
 highMax: 0.0
 relative: false
@@ -100,8 +100,8 @@ timeline0: 0.0
 - Scale - 
 lowMin: 1.0
 lowMax: 1.0
-highMin: 32.0
-highMax: 32.0
+highMin: 16.0
+highMax: 16.0
 relative: false
 scalingCount: 3
 scaling0: 1.0
@@ -115,8 +115,8 @@ timeline2: 1.0
 active: true
 lowMin: 0.0
 lowMax: 0.0
-highMin: 1000.0
-highMax: 1000.0
+highMin: 0.0
+highMax: 0.0
 relative: false
 scalingCount: 3
 scaling0: 0.039215688
@@ -173,7 +173,7 @@ timeline1: 0.10958904
 timeline2: 0.739726
 timeline3: 1.0
 - Options - 
-attached: true
+attached: false
 continuous: true
 aligned: false
 additive: true
