@@ -3,45 +3,57 @@ pack.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-activate1/activate1
+particle
+  rotate: false
+  xy: 0, 0
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+
+pack2.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+ia1/activate
   rotate: false
   xy: 0, 0
   size: 32, 64
   orig: 32, 64
   offset: 0, 0
-  index: 1
-activate1/activate1
+  index: 0
+ia1/activate
   rotate: false
   xy: 32, 0
   size: 32, 64
   orig: 32, 64
   offset: 0, 0
+  index: 1
+ia1/activate
+  rotate: false
+  xy: 64, 0
+  size: 32, 64
+  orig: 32, 64
+  offset: 0, 0
   index: 2
-activate1/activate1
+ia1/activate
   rotate: false
   xy: 64, 0
   size: 32, 64
   orig: 32, 64
   offset: 0, 0
   index: 3
-activate1/activate1
+ia1/activate
   rotate: false
-  xy: 64, 0
+  xy: 96, 0
   size: 32, 64
   orig: 32, 64
   offset: 0, 0
   index: 4
-activate1/activate1
+ia1/activate
   rotate: false
   xy: 96, 0
   size: 32, 64
   orig: 32, 64
   offset: 0, 0
   index: 5
-activate1/activate1
-  rotate: false
-  xy: 96, 0
-  size: 32, 64
-  orig: 32, 64
-  offset: 0, 0
-  index: 6
