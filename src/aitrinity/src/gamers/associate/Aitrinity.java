@@ -1,6 +1,7 @@
 package gamers.associate;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
@@ -28,7 +29,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -60,7 +64,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private float targetY;
 	
 	private TweenManager tweenManager;
-	private float zoom = 0.5f;
+	private float zoom = 0.6f;
 	
 	private boolean move;
 	private int fontSize = 10;
@@ -77,8 +81,18 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private float camX;
 	private float camY;
 	
+	private float mapRatio = 2;
+	private float baseTileSize = 16;
+	private float tileSize = baseTileSize * mapRatio;
+	
+	private HashSet<Vector2> passable;
+	private Vector2 testV;
+	
 	@Override
 	public void create() {		
+		passable = new HashSet<Vector2>();
+		testV = new Vector2();
+		
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 		
@@ -129,10 +143,31 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setColor(Color.GREEN);
 		
-		room0 = new TmxMapLoader().load("data/room0.tmx");
-		mapRenderer = new OrthogonalTiledMapRenderer(room0, 2f);
+		room0 = new TmxMapLoader().load("data/map3.tmx");
+		mapRenderer = new OrthogonalTiledMapRenderer(room0, mapRatio);
+		
+		TiledMapTileLayer layer = (TiledMapTileLayer) room0.getLayers().get(0);
+		int col = layer.getWidth();
+		int row = layer.getHeight();
+		for (int x = 0; x < col; x++) {
+			for (int y = 0; y < row; y++) {
+				TiledMapTileLayer.Cell cell = layer.getCell(x, y);
+				if (cell != null) {
+					TiledMapTile tile = cell.getTile();
+					if (tile.getProperties().containsKey("passable")) {
+						Vector2 v = new Vector2(x, y);
+						passable.add(v);
+					}
+				}
+				
+			}
+		}
 	}
 
+	private int mapCoord(float val) {
+		return (int) Math.floor(val / tileSize);
+	}
+	
 	@Override
 	public void dispose() {
 		batch.dispose();
@@ -164,6 +199,15 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		stateTime += delta;
 		texturePlayer = activateAnimation.getKeyFrame(stateTime, true);
 		
+		for(PooledEffect effect : effects) {
+			effect.setPosition(x, y+texturePlayer.getRegionHeight() / 2f);
+			effect.draw(batch, delta);
+			if (effect.isComplete()) {
+				effect.free();
+				effects.remove(effect);
+			}
+		}
+		
 		batch.end();
 		if (sayText != null) {
 			sayTime += delta;
@@ -175,14 +219,6 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		}
 		
 		batch.begin();
-		for(PooledEffect effect : effects) {
-			effect.setPosition(x, y+texturePlayer.getRegionHeight() / 2f);
-			effect.draw(batch, delta);
-			if (effect.isComplete()) {
-				effect.free();
-				effects.remove(effect);
-			}
-		}
 		
 		if (!move) {
 			batch.draw(texturePlayer, x-texturePlayer.getRegionWidth() / 2f, y);
@@ -253,25 +289,39 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		// TODO Auto-generated method stub
 		return false;
 	}
-
+	
+	private boolean dead;
+	private Timeline currentTL;
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		if (!move) {
+		if (move) {
+			if (currentTL != null) {
+				currentTL.free();
+			}
+			
+			move = false;
+			String say = "Hop";
+			setSay(say);
+		}
+		
+		if (!dead) {
 			targetX = (screenX - Gdx.graphics.getWidth() / 2) * zoom + camX;
 			targetY = (Gdx.graphics.getHeight() / 2f - screenY) * zoom + camY;
 			Vector2 pos = new Vector2(x, y);
 			Vector2 target = new Vector2(targetX, targetY);
 			float length = target.sub(pos).len();
 			float time = length / speed + 0.5f;
-			Timeline.createSequence()
+			currentTL = Timeline.createSequence()
 				.push(Tween.call(new TweenCallback() {
 					
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
 						move = true;
-						sayText = null;
-						PooledEffect effect = pool.obtain();
-						effects.add(effect);
+						// sayText = null;
+						if (effects.size() == 0) {
+							PooledEffect effect = pool.obtain();
+							effects.add(effect);
+						}
 					}
 				}))
 				.push(Tween.to(this, 0, time).target(targetX, targetY))
@@ -279,18 +329,35 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 					
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
-						for (PooledEffect effect : effects) {
-							effect.free();						
+						clearEffects();
+						move = false;
+						testV.x = mapCoord(x);
+						testV.y = mapCoord(y);
+						String say = "";
+						if (passable.contains(testV)) {
+							say = "Waazzaaaaaaa ";
+						} else {
+							say = "Arg suis mort ";
+							dead = true;
 						}
 						
-						effects.clear();
-						move = false;
-						setSay("Waazzaaaaaaa");
+						say += String.valueOf(testV.x) + ";" + String.valueOf(testV.y);
+						setSay(say);
+						
 					}
 				}))
 				.start(tweenManager);
 		}
+		
 		return true;
+	}
+	
+	private void clearEffects() {
+		for (PooledEffect effect : effects) {
+			effect.free();						
+		}
+		
+		effects.clear();
 	}
 
 	@Override
