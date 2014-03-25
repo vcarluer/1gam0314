@@ -1,6 +1,5 @@
 package gamers.associate;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 import aurelienribon.tweenengine.BaseTween;
@@ -21,7 +20,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
@@ -29,7 +27,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -41,9 +38,6 @@ import com.badlogic.gdx.utils.Array;
 public class Aitrinity implements ApplicationListener, InputProcessor, TweenAccessor<Aitrinity> {
 	private OrthographicCamera camera;
 	private SpriteBatch batch;
-	private Sprite sprite;
-	private int activateCols = 8;
-	private int activateCount = 6;
 	private Array<AtlasRegion>	activateFrames;
 	private Animation activateAnimation;
 	private float stateTime;
@@ -55,7 +49,8 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private FreeTypeFontGenerator fontGenerator;
 	
 	private ParticleEffectPool pool;
-	private ArrayList<PooledEffect> effects;
+	private HashSet<PooledEffect> effects;
+	private ParticleEffect bkgEffect;
 	
 	public float x;
 	public float y;
@@ -64,7 +59,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private float targetY;
 	
 	private TweenManager tweenManager;
-	private float zoom = 0.6f;
+	private float zoom = 0.4f;
 	
 	private boolean move;
 	private int fontSize = 10;
@@ -73,7 +68,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private String sayText;
 	private float sayTime;
 	
-	private float speed = 300;
+	private float speed = 500;
 	
 	private TiledMap room0;
 	private OrthogonalTiledMapRenderer mapRenderer;
@@ -81,7 +76,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private float camX;
 	private float camY;
 	
-	private float mapRatio = 2;
+	private float mapRatio = 2.5f;
 	private float baseTileSize = 16;
 	private float tileSize = baseTileSize * mapRatio;
 	
@@ -96,8 +91,8 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 		
-		x = 50;
-		y = 50;
+		x = worldCoord(3);
+		y = worldCoord(3);
 		
 		camera = new OrthographicCamera(w, h);
 		camX = (w / 2f) * zoom;
@@ -106,34 +101,25 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		camera.zoom = zoom;
 		camera.update();
 		batch = new SpriteBatch();
-		/*
-		texture = new Texture(Gdx.files.internal("data/anim_activate.png"));
-		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		
-		TextureRegion[][] tmp = TextureRegion.split(texture, texture.getWidth() / activateCols, texture.getHeight());
-		activateFrames = new TextureRegion[activateCount];
-		for (int i = 0; i < activateCount; i++) {
-			activateFrames[i] = tmp[0][i];
-		}
-				
-		*/
 		stateTime = 0f;
 		
 		// second method
 		atlas = new TextureAtlas(Gdx.files.internal("data/pack.atlas"));
-		activateFrames = atlas.findRegions("ia1/activate");
+		activateFrames = atlas.findRegions("player/idle");
 		
 		activateAnimation = new Animation(0.1f, activateFrames);
 		
-		// font = new BitmapFont(Gdx.files.internal("data/04b03.fnt"), Gdx.files.internal("data/04b03.png"), false);
 		fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("data/04b03.ttf"));
 		font = fontGenerator.generateFont(fontSize);
 		font.setColor(Color.BLACK);
 		
-		effects = new ArrayList<PooledEffect>();
+		effects = new HashSet<PooledEffect>();
 		ParticleEffect prototype = new ParticleEffect();
 		prototype.load(Gdx.files.internal("data/zerogreen2.p"), atlas);
 		pool = new ParticleEffectPool(prototype, 1, 2);
+		
+		bkgEffect = new ParticleEffect();
+		bkgEffect.load(Gdx.files.internal("data/bkg.p"), atlas);
 		
 		Gdx.input.setInputProcessor(this);
 		
@@ -168,6 +154,10 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		return (int) Math.floor(val / tileSize);
 	}
 	
+	private float worldCoord(int val) {
+		return val * tileSize;
+	}
+	
 	@Override
 	public void dispose() {
 		batch.dispose();
@@ -178,9 +168,14 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	
 	@Override
 	public void render() {		
-		Gdx.gl.glClearColor(0, 0, 0, 0);
+		Gdx.gl.glClearColor(0.12f, 0.6f, 0, 0.36f);
+		// Gdx.gl.glClearColor(0.06f, 0.3f, 0, 0.36f);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		
+		if (dead) {
+			dead = false;
+			x = worldCoord(3);
+			y = worldCoord(3);
+		}
 				
 		camX = x;
 		camY = y;
@@ -190,11 +185,19 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		batch.setProjectionMatrix(camera.combined);
 		
 		mapRenderer.setView(camera);
+		float delta = Gdx.graphics.getDeltaTime();
+		
+		
+		batch.begin();
+		// bkgEffect.setPosition(x, y);
+		bkgEffect.draw(batch, delta);
+		batch.end();
+		
 		mapRenderer.render();
 		
 		batch.begin();
 		// sprite.draw(batch);
-		float delta = Gdx.graphics.getDeltaTime();
+		
 		tweenManager.update(delta);
 		stateTime += delta;
 		texturePlayer = activateAnimation.getKeyFrame(stateTime, true);
@@ -240,10 +243,10 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		
 		shapeRenderer.setColor(Color.GREEN);
 		shapeRenderer.rect(sayX - padding, sayY-padding, sayWidth + padding * 2, sayHeight + padding * 2);
-		shapeRenderer.setColor(Color.WHITE);
+		shapeRenderer.setColor(new Color(0.4f, 1f, 0, 1f));
 		shapeRenderer.rect(sayX - paddingIn, sayY-paddingIn, sayWidth + paddingIn * 2, sayHeight + paddingIn * 2);
 		shapeRenderer.end();
-		font.setColor(Color.BLACK);
+		font.setColor(new Color(0.06f, 0.3f, 0, 1));
 		batch.begin();
 		font.draw(batch, text, sayX, sayY + sayHeight * 3 / 4);
 		batch.end();
@@ -341,7 +344,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 							dead = true;
 						}
 						
-						say += String.valueOf(testV.x) + ";" + String.valueOf(testV.y);
+						// say += String.valueOf(testV.x) + ";" + String.valueOf(testV.y);
 						setSay(say);
 						
 					}
