@@ -64,36 +64,57 @@ filter: Nearest,Nearest
 repeat: none
 player/idle
   rotate: false
-  xy: 0, 0
+  xy: 128, 0
   size: 32, 64
   orig: 32, 64
   offset: 0, 0
   index: 0
 player/idle
   rotate: false
-  xy: 32, 0
+  xy: 160, 0
   size: 32, 64
   orig: 32, 64
   offset: 0, 0
   index: 1
 player/idle
   rotate: false
-  xy: 64, 0
+  xy: 192, 0
   size: 32, 64
   orig: 32, 64
   offset: 0, 0
   index: 2
 player/idle
   rotate: false
-  xy: 96, 0
+  xy: 224, 0
   size: 32, 64
   orig: 32, 64
   offset: 0, 0
   index: 3
 player/idle
   rotate: false
-  xy: 128, 0
+  xy: 256, 0
   size: 32, 64
   orig: 32, 64
   offset: 0, 0
   index: 4
+player/introfly
+  rotate: false
+  xy: 0, 0
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 0
+player/introfly
+  rotate: false
+  xy: 0, 0
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 2
+player/introfly
+  rotate: false
+  xy: 64, 0
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 1

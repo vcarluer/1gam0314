@@ -1,5 +1,6 @@
 package gamers.associate;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import aurelienribon.tweenengine.BaseTween;
@@ -44,6 +45,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private Animation activateAnimation;
 	private Array<AtlasRegion> ia1Frames;
 	private Animation ia1Animation;
+	private Animation introAnimation;
 	private float stateTime;
 	private ShapeRenderer shapeRenderer;
 	
@@ -55,6 +57,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private ParticleEffectPool pool;
 	private HashSet<PooledEffect> effects;
 	private ParticleEffect bkgEffect;
+	private ParticleEffect introEffect;
 	
 	public Rectangle player;
 	private Vector2 targetV;
@@ -65,6 +68,9 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	
 	private boolean move;
 	private int fontSize = 10;
+	
+	private BitmapFont fontIntro;
+	private int fontSizeIntro = 30;
 	
 	private float sayLife = 1f;
 	private String sayText;
@@ -97,6 +103,8 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private Rectangle referenceTalk;
 	
 	private Rectangle tempRect;
+	
+	private int scene;
 	
 	@Override
 	public void create() {		
@@ -145,6 +153,8 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("data/04b03.ttf"));
 		font = fontGenerator.generateFont(fontSize);
 		font.setColor(Color.BLACK);
+		fontIntro = fontGenerator.generateFont(fontSizeIntro);
+		fontIntro.setColor(Color.WHITE);
 		
 		effects = new HashSet<PooledEffect>();
 		ParticleEffect prototype = new ParticleEffect();
@@ -153,6 +163,9 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		
 		bkgEffect = new ParticleEffect();
 		bkgEffect.load(Gdx.files.internal("data/bkg.p"), atlas);
+		introEffect = new ParticleEffect();
+		introEffect.load(Gdx.files.internal("data/zerogreenintro.p"), atlas);
+		introAnimation = new Animation(0.15f, atlas.findRegions("player/introfly"));
 		
 		Gdx.input.setInputProcessor(this);
 		
@@ -181,6 +194,25 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 				
 			}
 		}
+		
+		sentencesScene1 = new ArrayList<String>();
+		sentencesScene1.add("I am entering the Matrix");
+		sentencesScene1.add("I hope everything will be ok");
+		sentencesScene1.add("I am searching the trinity AI");
+		sentencesScene1.add("I have a work for them");
+		sentencesScene1.add("I remember my virtual moves");
+		sentencesScene1.add("RIGHT click MOVE my avatar");
+		sentencesScene1.add("... And LEFT click INTERACT with the matrix");
+		sentencesScene1.add("I really need to be careful");
+		sentencesScene1.add("I will lost my avatar if it fails in matrix flow");
+		sentencesScene1.add("Let's go!");
+		
+		sentencesScene3 = new ArrayList<String>();
+		sentencesScene3.add("I disappeared, humm...");
+		sentencesScene3.add("My avatar has lost himself in matrix flow");
+		sentencesScene3.add("I have to go back quickly");
+		sentencesScene3.add("I have to find the trinity AI");
+		
 	}
 
 	private int mapCoord(float val) {
@@ -199,88 +231,153 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 
 	TextureRegion texturePlayer;
 	
+	private float interludeTextLife = 3.5f;
+	private float interludeTextTime;
+	private int interludeTextIdx = 0;
+	private ArrayList<String> sentencesScene1;
+	private ArrayList<String> sentencesScene3;
 	@Override
 	public void render() {		
 		Gdx.gl.glClearColor(0.01f, 0.05f, 0, 0.1f);
 		// Gdx.gl.glClearColor(0.06f, 0.3f, 0, 0.36f);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		if (dead) {
-			dead = false;
-			player.x = worldCoord(3);
-			player.y = worldCoord(3);
-			referenceTalk = null;
-			sayText = null;
-			opt1 = null;
-			ia1Text = null;
+		
+		float delta = Gdx.graphics.getDeltaTime();
+		stateTime += delta;
+		
+		if (scene == 0) {
+			drawInterlude(delta);
+			drawText(delta, sentencesScene1);
 		}
-				
-		camX = player.x;
-		camY = player.y;
-		camera.position.x = player.x;
-		camera.position.y = player.y;
+		
+		if (scene == 3) {
+			drawInterlude(delta);
+			drawText(delta, sentencesScene3);
+		}
+		
+		if (scene == 1) {
+			if (dead) {
+				dead = false;
+				player.x = worldCoord(3);
+				player.y = worldCoord(3);
+				referenceTalk = null;
+				sayText = null;
+				opt1 = null;
+				ia1Text = null;
+			}
+					
+			camX = player.x;
+			camY = player.y;
+			camera.position.x = player.x;
+			camera.position.y = player.y;
+			camera.zoom = zoom;
+			camera.update();
+			batch.setProjectionMatrix(camera.combined);
+			
+			mapRenderer.setView(camera);
+			
+			
+			batch.begin();
+			// bkgEffect.setPosition(x, y);
+			bkgEffect.draw(batch, delta);
+			batch.end();
+			
+			mapRenderer.render();
+			
+			batch.begin();
+			// sprite.draw(batch);
+			
+			tweenManager.update(delta);
+			
+			texturePlayer = activateAnimation.getKeyFrame(stateTime, true);
+			TextureRegion textureIa1 = ia1Animation.getKeyFrame(stateTime, true);
+			
+			for(PooledEffect effect : effects) {
+				effect.setPosition(player.x + texturePlayer.getRegionWidth() / 2f, player.y+texturePlayer.getRegionHeight() / 2f);
+				effect.draw(batch, delta);
+				if (effect.isComplete()) {
+					effect.free();
+					effects.remove(effect);
+				}
+			}
+			
+			if (ia1.y > player.y) {
+				batch.draw(textureIa1, ia1.x, ia1.y);
+			}
+			
+			if (!move) {
+				batch.draw(texturePlayer, player.x, player.y);
+			}
+			
+			if (ia1.y <= player.y) {
+				batch.draw(textureIa1, ia1.x, ia1.y);
+			}
+			
+			batch.end();	
+			
+			if (sayText != null) {
+				sayTime += delta;
+				if (sayTime < sayLife) {
+					say(sayText);
+				} else {
+					sayText = null;
+				}
+			}
+			
+			if (ia1Text != null) {
+				setSayRect(ia1Text, 0, textureIa1, ia1.x, ia1.y, ia1TextRect, player);
+				say(ia1Text, ia1TextRect, false);
+			}
+			
+			if (opt1 != null) {
+				setSayRect(opt1, 1, texturePlayer, player.x, player.y, opt1Rect, referenceTalk);
+				say(opt1, opt1Rect, true);
+			}
+		}
+	}
+	
+	private void drawInterlude(float delta) {
+		camera.zoom = 1f;
+		camera.position.x = 0;
+		camera.position.y = 0;
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
-		
-		mapRenderer.setView(camera);
-		float delta = Gdx.graphics.getDeltaTime();
-		
-		
 		batch.begin();
-		// bkgEffect.setPosition(x, y);
-		bkgEffect.draw(batch, delta);
+		introEffect.draw(batch, delta);
+		batch.draw(introAnimation.getKeyFrame(stateTime, true), -128, -128, 0, 0, 256, 256, 1, 1, 0);
 		batch.end();
+	}
+	
+	private void drawText(float delta, ArrayList<String> sentences) {
+		interludeTextTime+=delta;
+		if (interludeTextTime > interludeTextLife) {
+			interludeTextTime = 0;
+			interludeTextIdx++;
+		}
 		
-		mapRenderer.render();
+		if (interludeTextIdx >= sentences.size()) {
+			scene = 1;
+			interludeTextIdx = 0;
+			interludeTextTime = 0;
+			return;
+		}
 		
+		String text = sentences.get(interludeTextIdx);
+		TextBounds bounds = fontIntro.getBounds(text);
+		tempRect.x = - bounds.width / 2f;
+		tempRect.y = -300;
+		tempRect.width = bounds.width;
+		tempRect.height = bounds.height;
+		
+		shapeRenderer.setProjectionMatrix(camera.combined);
+		shapeRenderer.begin(ShapeType.Filled);
+		shapeRenderer.setColor(new Color(0.4f, 1f, 0, 1f));
+		int padding = 25;
+		shapeRenderer.rect(-Gdx.graphics.getWidth() / 2f + padding, tempRect.y - padding, Gdx.graphics.getWidth() - padding * 2, tempRect.height + padding * 2);
+		shapeRenderer.end();
 		batch.begin();
-		// sprite.draw(batch);
-		
-		tweenManager.update(delta);
-		stateTime += delta;
-		texturePlayer = activateAnimation.getKeyFrame(stateTime, true);
-		TextureRegion textureIa1 = ia1Animation.getKeyFrame(stateTime, true);
-		
-		for(PooledEffect effect : effects) {
-			effect.setPosition(player.x + texturePlayer.getRegionWidth() / 2f, player.y+texturePlayer.getRegionHeight() / 2f);
-			effect.draw(batch, delta);
-			if (effect.isComplete()) {
-				effect.free();
-				effects.remove(effect);
-			}
-		}
-		
-		if (ia1.y > player.y) {
-			batch.draw(textureIa1, ia1.x, ia1.y);
-		}
-		
-		if (!move) {
-			batch.draw(texturePlayer, player.x, player.y);
-		}
-		
-		if (ia1.y <= player.y) {
-			batch.draw(textureIa1, ia1.x, ia1.y);
-		}
-		
-		batch.end();	
-		
-		if (sayText != null) {
-			sayTime += delta;
-			if (sayTime < sayLife) {
-				say(sayText);
-			} else {
-				sayText = null;
-			}
-		}
-		
-		if (ia1Text != null) {
-			setSayRect(ia1Text, 0, textureIa1, ia1.x, ia1.y, ia1TextRect, player);
-			say(ia1Text, ia1TextRect, false);
-		}
-		
-		if (opt1 != null) {
-			setSayRect(opt1, 1, texturePlayer, player.x, player.y, opt1Rect, referenceTalk);
-			say(opt1, opt1Rect, true);
-		}
+		fontIntro.draw(batch, text, tempRect.x, tempRect.y + tempRect.height);
+		batch.end();
 	}
 	
 	private void say(String text) {
@@ -394,11 +491,17 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		if (scene != 1)  {
+			interludeTextIdx++;
+			interludeTextTime = 0;
+			return true;
+		}
+		
 		setClickV(screenX, screenY);
 		if (button == 0) {
 			if (ia1.contains(clickV)) {
 				ia1Text = "How are you?";
-				opt1 = "> Fine and you my dear?";
+				opt1 = "> Fine and you?";
 				referenceTalk = ia1;
 			} else {
 				if (opt1Rect.contains(clickV)) {
@@ -406,9 +509,15 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 					opt1 = null;
 					referenceTalk = null;
 				} else {
-					ia1Text = "fuck off";
-					opt1 = null;
-					referenceTalk = null;
+					if (referenceTalk != null) {
+						ia1Text = "bye";
+						opt1 = null;
+						referenceTalk = null;
+					} else {
+						ia1Text = "Hey!";
+						opt1 = null;
+						referenceTalk = null;
+					}
 				}				
 			}
 		}
@@ -456,10 +565,11 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 							testV.x = mapCoord(player.x + texturePlayer.getRegionWidth() / 2f);
 							testV.y = mapCoord(player.y);
 							if (passable.contains(testV)) {
-								say = "Waazzaaaaaaa ";
+								say = "What is there";
 							} else {
-								say = "Arg suis mort ";
+								say = null;
 								dead = true;
+								scene = 3;
 							}
 							
 							// say += String.valueOf(testV.x) + ";" + String.valueOf(testV.y);
