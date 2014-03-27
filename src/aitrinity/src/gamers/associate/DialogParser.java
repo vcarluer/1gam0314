@@ -100,13 +100,15 @@ public class DialogParser {
 			
 			if (toParse.startsWith("$GOTOEXIT")) {
 				node.setGotoExit(true);
+				toParse = toParse.substring(9);
 			}
 			
 			if (toParse.startsWith("$EXIT")) {
 				node.setExit(true);
+				toParse = toParse.substring(5);
 			}
 			
-			node.setSay(toParse);
+			node.setSay(toParse.trim());
 			
 			previousNode = node;
 			previousIndent = indentLevel;

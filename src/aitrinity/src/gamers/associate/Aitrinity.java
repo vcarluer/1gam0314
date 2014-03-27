@@ -74,7 +74,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private BitmapFont fontIntro;
 	private int fontSizeIntro = 30;
 	
-	private float sayLife = 1f;
+	private float sayLife = 3f;
 	private String sayText;
 	private float sayTime;
 	
@@ -107,6 +107,8 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private Rectangle tempRect;
 	
 	private int scene;
+	
+	private DialogManager ia1Dial;
 	
 	@Override
 	public void create() {		
@@ -152,7 +154,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		ia1Frames = atlas.findRegions("ia1/activate");
 		ia1Animation = new Animation(0.12f, ia1Frames);
 		
-		fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("data/04b03.ttf"));
+		fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("data/thirteen.ttf"));
 		font = fontGenerator.generateFont(fontSize);
 		font.setColor(Color.BLACK);
 		fontIntro = fontGenerator.generateFont(fontSizeIntro);
@@ -198,7 +200,8 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		}
 		
 		Ia1 ia1State = new Ia1(); 
-		DialogParser.parse(ia1State);
+		DialNode ia1DialNode = DialogParser.parse(ia1State);
+		ia1Dial = new DialogManager(ia1DialNode);
 		
 		sentencesScene1 = new ArrayList<String>();
 		sentencesScene1.add("I am entering the Matrix");
@@ -241,6 +244,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private int interludeTextIdx = 0;
 	private ArrayList<String> sentencesScene1;
 	private ArrayList<String> sentencesScene3;
+	private float ia1TextTime;
 	@Override
 	public void render() {		
 		Gdx.gl.glClearColor(0.01f, 0.05f, 0, 0.1f);
@@ -269,6 +273,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 				sayText = null;
 				opt1 = null;
 				ia1Text = null;
+				currentDialog = null;
 			}
 					
 			camX = player.x;
@@ -318,9 +323,9 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 				batch.draw(textureIa1, ia1.x, ia1.y);
 			}
 			
-			batch.end();	
+			batch.end();
 			
-			if (sayText != null) {
+			if (sayText != null && !sayText.equals("")) {
 				sayTime += delta;
 				if (sayTime < sayLife) {
 					say(sayText);
@@ -329,16 +334,30 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 				}
 			}
 			
-			if (ia1Text != null) {
-				setSayRect(ia1Text, 0, textureIa1, ia1.x, ia1.y, ia1TextRect, player);
-				say(ia1Text, ia1TextRect, false);
-			}
+			if (currentDialog != null) {				
+				if (ia1Text != null && !ia1Text.equals("")) {
+					ia1TextTime += delta;
+					if (ia1TextTime < sayLife) {
+						setSayRect(ia1Text, 0, textureIa1, ia1.x, ia1.y, ia1TextRect, player);
+						say(ia1Text, ia1TextRect, false);
+					} else {
+						ia1Text = null;
+					}
+				} else {
+					nextIa1dial();
+				}
+			}			
 			
 			if (opt1 != null) {
 				setSayRect(opt1, 1, texturePlayer, player.x, player.y, opt1Rect, referenceTalk);
 				say(opt1, opt1Rect, true);
 			}
 		}
+	}
+	
+	private void nextIa1dial() {
+		ia1Text = ia1Dial.getNextSay();
+		ia1TextTime = 0;
 	}
 	
 	private void drawInterlude(float delta) {
@@ -392,11 +411,12 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	
 	private void setSayRect(String text, int idx, TextureRegion texture, float x, float y, Rectangle rect, Rectangle relativeTalk) {
 		TextBounds bounds = font.getBounds(text);
-		if (relativeTalk == null || relativeTalk.x < x) {
-			rect.x = x + texture.getRegionWidth();
-		} else {
-			rect.x = x - bounds.width - padding * 2;
-		}
+//		if (relativeTalk == null || relativeTalk.x < x) {
+//			rect.x = x + texture.getRegionWidth();
+//		} else {
+//			rect.x = x - bounds.width - padding * 2;
+//		}
+		rect.x = x - bounds.width / 2 +texture.getRegionWidth() / 2f - padding;
 		
 		rect.y = y + texture.getRegionHeight() - idx * (bounds.height + padding * 2);
 		
@@ -488,6 +508,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	
 	private boolean dead;
 	private Timeline currentTL;
+	private DialogManager currentDialog;
 	
 	private void setClickV(int screenX, int screenY) {
 		clickV.x = (screenX - Gdx.graphics.getWidth() / 2) * zoom + camX;
@@ -505,27 +526,16 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		setClickV(screenX, screenY);
 		if (button == 0) {
 			if (ia1.contains(clickV)) {
-				ia1Text = "How are you?";
-				opt1 = "> Fine and you?";
-				referenceTalk = ia1;
-			} else {
-				if (opt1Rect.contains(clickV)) {
-					ia1Text = "I'm OK";
-					opt1 = null;
-					referenceTalk = null;
-				} else {
-					if (referenceTalk != null) {
-						ia1Text = "bye";
-						opt1 = null;
-						referenceTalk = null;
-					} else {
-						ia1Text = "Hey!";
-						opt1 = null;
-						referenceTalk = null;
-					}
-				}				
+				currentDialog = ia1Dial;
+				currentDialog.startDialog();
+				ia1Text = null;
+			}
+			else {
+				sayText = null;
+				currentDialog = null;
 			}
 		}
+		
 		if (button == 1) {
 			if (move) {
 				if (currentTL != null) {

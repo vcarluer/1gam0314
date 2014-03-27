@@ -26,6 +26,10 @@ public class DialNode {
 	public void addChild(DialNode child) {
 		childs.add(child);
 	}
+	
+	public List<DialNode> getChilds() {
+		return childs;
+	}
 
 	public DialNode getParent() {
 		return parent;
