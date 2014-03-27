@@ -195,6 +195,9 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			}
 		}
 		
+		Ia1 ia1State = new Ia1(); 
+		DialogParser.parse(ia1State);
+		
 		sentencesScene1 = new ArrayList<String>();
 		sentencesScene1.add("I am entering the Matrix");
 		sentencesScene1.add("I hope everything will be ok");
