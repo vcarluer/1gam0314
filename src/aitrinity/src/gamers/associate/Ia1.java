@@ -3,6 +3,10 @@ package gamers.associate;
 public class Ia1 implements IState {
 	private String state;
 	
+	public Ia1() {
+		state = "new";
+	}
+	
 	@Override
 	public String getState() {
 		return state;

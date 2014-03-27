@@ -1,9 +1,9 @@
 $STATE=new;J'ai cru comprendre que tu me cherchais
 >$STATE=new;En effet
-$STATE!=new;Content de te revoir
->$STATE!=new;J'ai encore quelques questions
+$STATE=notnew;Content de te revoir
+>$STATE=notnew;J'ai encore quelques questions
 	$STATE=new;Alors tu m'a trouvé je crois
-	$STATE!=new;Bien sûr
+	$STATE=notnew;Bien sûr
 	>$STATE=new;J'ai quelques questions à vous poser
 	>$STATE=new;Je m'appelle Neon, j'ai besoin de votre aide
 		$STATE=new;Qu'est-ce qui t'amène ici ?
@@ -13,16 +13,15 @@ $STATE!=new;Content de te revoir
 		>Oui
 			Nous étions avant une et une seule IA. Mais un hacker du nom de Shadow nous a séparé en 3 pour mieux nous contrôler. Nous sommes arrivé à échapper à son emprise mais à présent nous devons nous cacher dans la matrice.
 		>Non
+		#je dois y aller
 		#Laissez tomber
-		$EXIT
+		$GOTOEXIT
 		#$ITEM=photo;J'ai quelquechose pour vous
 			Ha oui qu'est-ce
 			>Il s'agit de la photo de mon ex petite amie. elle s'est uploadé dans la matrice il y a 2 semaines. Elle me manque terriblement. Vous croyez que vous pourriez la contacter pour moi?
 				$SET_STATE=photo;C'est difficile mais je vais essayer. Je reviendrai vers toi si je réussis.
-	
 >$STATE=new;Vous vous trompez
+$GOTOEXIT
 $EXIT
-
-:$EXIT
-A bientôt
-$STATE=photo;Je te contact vite
+	A bientôt
+	$STATE=photo;Je te contact vite

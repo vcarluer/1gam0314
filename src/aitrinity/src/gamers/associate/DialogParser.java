@@ -1,37 +1,102 @@
 package gamers.associate;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 
 public class DialogParser {
 	public static DialNode parse(IState stateItem) {
-		DialNode rootNode = null;
-		DialNode parentNode = null;
+		DialNode rootNode = new DialNode();
+		DialNode previousNode = rootNode;
 		FileHandle file = Gdx.files.internal("data/dialog/" + stateItem.getId());
-		String dialFull = file.readString();
+		String dialFull = file.readString("UTF-8");
 		String[] dials = dialFull.split("\r\n");
 		int i = 0;
+		int previousIndent = -1;
+		ArrayList<DialNode> nodeCursor = new ArrayList<DialNode>();		
+		
 		for (String dial : dials) {
 			DialNode node = new DialNode();
-			
-			if (i == 0) {
-				rootNode = node; 
+			int indentLevel = 0;
+			for (int c = 0; c < dial.length(); c++) {
+				char ch = dial.charAt(c);
+				if (ch == '\t') {
+					indentLevel++;
+				} else {
+					break;
+				}
 			}
 			
-			if (parentNode != null) {
-				node.setParent(parentNode);
+			String toParse = dial.replaceAll("\t", "");
+			
+			if (previousIndent < indentLevel) {
+				nodeCursor.add(previousNode);
+			}			
+			
+			if (previousIndent > indentLevel) {
+				for (int rm = indentLevel + 1; rm < nodeCursor.size();) {
+					nodeCursor.remove(nodeCursor.size() - 1);
+				}
 			}
+						
+			node.setParent(nodeCursor.get(nodeCursor.size() - 1));			
 			
 			node.setStateItem(stateItem);
+			node.setWho(DialWho.NPC);
+			node.setStrategy(DialStrat.Or);
 			
-			node.setLine(dial);
+			if (toParse.startsWith(">")) {
+				node.setWho(DialWho.Player);
+				node.setStrategy(DialStrat.Or);
+				toParse = toParse.substring(1);
+			}
 			
-			parentNode = node;
+			if (toParse.startsWith("#")) {
+				node.setWho(DialWho.Player);
+				node.setStrategy(DialStrat.And);
+				toParse = toParse.substring(1);
+			}
+			
+			if (toParse.startsWith("$STATE")) {
+				int pos = toParse.indexOf(";");
+				if (pos != -1) {
+					String state = toParse.substring(7, pos);
+					node.setStateConstraint(state);
+					toParse = toParse.substring(pos + 1);
+				}
+			}
+			
+			if (toParse.startsWith("$SET_STATE")) {
+				int pos = toParse.indexOf(";");
+				if (pos != -1) {
+					String state = toParse.substring(11, pos);
+					node.setSetState(state);
+					toParse = toParse.substring(pos + 1);
+				}
+			}
+			
+			if (toParse.startsWith("$ITEM")) {
+				int pos = toParse.indexOf(";");
+				if (pos != -1) {
+					String item = toParse.substring(6, pos);
+					node.setItemContraint(item);
+					toParse = toParse.substring(pos + 1);
+				}
+			}
+			
+			if (toParse.startsWith("$GOTOEXIT")) {
+				node.setGotoExit(true);
+			}
+			
+			if (toParse.startsWith("$EXIT")) {
+				node.setExit(true);
+			}
+			
+			node.setSay(toParse);
+			
+			previousNode = node;
+			previousIndent = indentLevel;
 			i++;
 		}
 		
