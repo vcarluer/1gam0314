@@ -1,28 +1,30 @@
 $STATE=new;J'ai cru comprendre que tu me cherchais
->$STATE=new;En effet
+	>En effet
+	Alors tu m'a trouvé je crois
+	$SET_STATE=notnew;
+	$RM_STATE=new;
 $STATE=notnew;Content de te revoir
->$STATE=notnew;J'ai encore quelques questions
-	$STATE=new;Alors tu m'a trouvé je crois
-	$STATE=notnew;Bien sûr
-	>$STATE=new;J'ai quelques questions à vous poser
-	>$STATE=new;Je m'appelle Neon, j'ai besoin de votre aide
-		$STATE=new;Qu'est-ce qui t'amène ici ?
-		#J'ai un travail pour vous. Je pirate les comptes mails des imprudents de la matrice. Et je crois qu'ensemble nous pourrions nous faire beaucoup d'argent.
-		#Il parrait que vous êtes une IA particulièrement développé
+	>J'ai encore quelques questions
+	Bien sûr
+>$STATE=new;J'ai quelques questions à vous poser
+>$STATE=new;Je m'appelle Neon, j'ai besoin de votre aide
+>$STATE=notnew;Redemande moi ce que tu veux
+	$STATE=new;Qu'est-ce qui t'amène ici ?
+	#J'ai un travail pour vous. Je pirate les comptes mails des imprudents de la matrice. Et je crois qu'ensemble nous pourrions nous faire beaucoup d'argent.
+	#Il parrait que vous êtes une IA particulièrement développé
 		Pas moi, nous sommes 3 et ensemble nous sommes... comment dire, extrèmement puissantes. Veux-tu en savoir plus?
-		>Oui
-			Nous étions avant une et une seule IA. Mais un hacker du nom de Shadow nous a séparé en 3 pour mieux nous contrôler. Nous sommes arrivé à échapper à son emprise mais à présent nous devons nous cacher dans la matrice.
-		>Non
-		#je dois y aller
-		#Laissez tomber
+			>Oui
+				Nous étions avant une et une seule IA. Mais un hacker du nom de Shadow nous a séparé en 3 pour mieux nous contrôler. Nous sommes arrivé à échapper à son emprise mais à présent nous devons nous cacher dans la matrice.
+			>Non
+	#je dois y aller
+	#Laissez tomber
 		$GOTOEXIT
-		#$ITEM=photo;J'ai quelquechose pour vous
-			Ha oui qu'est-ce
-			>Il s'agit de la photo de mon ex petite amie. elle s'est uploadé dans la matrice il y a 2 semaines. Elle me manque terriblement. Vous croyez que vous pourriez la contacter pour moi?
-				$SET_STATE=photo;C'est difficile mais je vais essayer. Je reviendrai vers toi si je réussis.
-	
+	#$ITEM=photo;J'ai quelquechose pour vous
+		Ha oui qu'est-ce
+		>Il s'agit de la photo de mon ex petite amie. elle s'est uploadé dans la matrice il y a 2 semaines. Elle me manque terriblement. Vous croyez que vous pourriez la contacter pour moi?
+			$SET_STATE=photo;C'est difficile mais je vais essayer. Je reviendrai vers toi si je réussis.
 >$STATE=new;Vous vous trompez
-$GOTOEXIT
+	$GOTOEXIT
 $EXIT
 	A bientôt
 	$STATE=photo;Je te contact vite

@@ -32,7 +32,11 @@ public class DialogParser {
 			
 			if (previousIndent < indentLevel) {
 				nodeCursor.add(previousNode);
-			}			
+			}
+			
+			if (previousIndent == indentLevel) {
+				previousNode.setLinkedNode(node);
+			}
 			
 			if (previousIndent > indentLevel) {
 				for (int rm = indentLevel + 1; rm < nodeCursor.size();) {
@@ -72,6 +76,15 @@ public class DialogParser {
 				if (pos != -1) {
 					String state = toParse.substring(11, pos);
 					node.setSetState(state);
+					toParse = toParse.substring(pos + 1);
+				}
+			}
+			
+			if (toParse.startsWith("$RM_STATE")) {
+				int pos = toParse.indexOf(";");
+				if (pos != -1) {
+					String state = toParse.substring(10, pos);
+					node.setRemoveState(state);
 					toParse = toParse.substring(pos + 1);
 				}
 			}

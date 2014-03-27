@@ -16,6 +16,8 @@ public class DialNode {
 	private DialWho who;
 	private boolean gotoExit;
 	private boolean isExit;
+	private String removeState;
+	private DialNode linkedNode;
 	
 	public DialNode() {
 		childs = new ArrayList<DialNode>();
@@ -114,5 +116,21 @@ public class DialNode {
 
 	public void setSay(String say) {
 		this.say = say;
+	}
+
+	public String getRemoveState() {
+		return removeState;
+	}
+
+	public void setRemoveState(String removeState) {
+		this.removeState = removeState;
+	}
+
+	public DialNode getLinkedNode() {
+		return linkedNode;
+	}
+
+	public void setLinkedNode(DialNode linkedNode) {
+		this.linkedNode = linkedNode;
 	}
 }

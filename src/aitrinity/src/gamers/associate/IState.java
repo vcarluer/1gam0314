@@ -1,7 +1,8 @@
 package gamers.associate;
 
 public interface IState {
-	public String getState();
-	public void setState(String state);
+	public void addState(String state);
+	public void rmState(String state);
+	public boolean isState(String state);
 	public String getId();
 }

@@ -12,6 +12,7 @@ import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
@@ -37,6 +38,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.sun.corba.se.impl.oa.poa.ActiveObjectMap.Key;
 
 public class Aitrinity implements ApplicationListener, InputProcessor, TweenAccessor<Aitrinity> {
 	private OrthographicCamera camera;
@@ -467,9 +469,9 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	}
 
 	@Override
-	public boolean keyUp(int keycode) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean keyUp(int keycode) {	
+		if (keycode == Input.Keys.ESCAPE) scene = 1;
+		return true;
 	}
 
 	@Override
