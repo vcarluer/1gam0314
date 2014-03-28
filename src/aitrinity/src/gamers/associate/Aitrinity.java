@@ -113,8 +113,26 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	public static Aitrinity game;
 	
 	private DialogRenderer dialogRenderer;
+
+	private ArrayList<Item> inventory;
+
+	private ArrayList<Item> mapItems;
+
+	private ItemsRenderer itemsRenderer;
+	private InventoryRenderer inventoryRenderer;
+	private ItemCrafter itemCrafter;
+	private ItemInfo itemInfo;
+
+	private Item selectedItem;
+
+	private ArrayList<NPC> npcs;
+
 	@Override
 	public void create() {
+		inventory = new ArrayList<Item>();
+		mapItems = new ArrayList<Item>()
+		npcs = new ArrayList<NPC>();
+
 		game = this;
 		passable = new HashSet<Vector2>();
 		testV = new Vector2();
@@ -224,8 +242,57 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		sentencesScene3.add("My avatar has lost himself in matrix flow");
 		sentencesScene3.add("I have to go back quickly");
 		sentencesScene3.add("I have to find the trinity AI");
+
+		sentencesSceneF1  = new ArrayList<String>();
+		sentencesSceneF1.add("The first trinity found her");
+		sentencesSceneF1.add("My ex girl firend here in the matrix");
+		sentencesSceneF1.add("She wants to see me");
+		sentencesSceneF1.add("She wants to see the real me");
+		sentencesSceneF1.add("Not my flesh, not my human feeling");
+		sentencesSceneF1.add("I have to reborn in the matrix");
+		sentencesSceneF1.add("To upload my self");
+		sentencesSceneF1.add("And sacrifice my body");
+		sentencesSceneF1.add("This is where I go");
+		sentencesSceneF1.add("I love her");		
+
+		sentencesSceneF2 = new ArrayList<String>();
+		sentencesSceneF2.add("The second trinity found my fbi case");
+		sentencesSceneF2.add("All the record are deleted");
+		sentencesSceneF2.add("I'm free again now");
+		sentencesSceneF2.add("I'm going to restart my life");
+		sentencesSceneF2.add("Not everybody have a second chance");
+
+		sentencesSceneF3 = new ArrayList<String>();
+		sentencesSceneF3.add("The third trinity have works well");
+		sentencesSceneF3.add("I have a bank account with millions");
+		sentencesSceneF3.add("But now I'm tracked");
+		sentencesSceneF3.add("Just behind me is the FBI");
+		sentencesSceneF3.add("I know they will catch me soon");
+		sentencesSceneF3.add("I've lost my life, i've lost my love");
+		sentencesSceneF3.add("The rest of my life is finished");
 		
 		dialogRenderer = new DialogRenderer();
+
+		// Items
+		itemsRenderer = new ItemsRenderer();
+		inventoryRenderer = new InventoryRenderer();
+		itemCrafter = new ItemCrafter();
+		itemInfo = new ItemInfo();
+		Item cadre = new Item("cadre", new Rectangle(worldCoord(5), worldCoord(5), 0, 0);
+		mapItems.add(cadre);
+		Item photo = new Item("photo", new Rectangle(worldCoord(7), worldCoord(6), 0, 0);
+		mapItems.add(photo);
+		Item photo = new Item("casque", new Rectangle(worldCoord(9), worldCoord(6), 0, 0);
+		mapItems.add(photo);
+		Item photo = new Item("cable", new Rectangle(worldCoord(11), worldCoord(6), 0, 0);
+		mapItems.add(photo);
+		Item photo = new Item("manche", new Rectangle(worldCoord(13), worldCoord(6), 0, 0);
+		mapItems.add(photo);
+		Item photo = new Item("lame", new Rectangle(worldCoord(15), worldCoord(6), 0, 0);
+		mapItems.add(photo);
+
+		Item porte = new Item("porte", new Rectangle(woorldCoord(10), worldCoord(10), 0, 0, false);
+		mapItems.add(porte);		
 	}
 
 	private int mapCoord(float val) {
@@ -249,6 +316,9 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private int interludeTextIdx = 0;
 	private ArrayList<String> sentencesScene1;
 	private ArrayList<String> sentencesScene3;
+	private ArrayList<String> sentencesSceneF1;
+	private ArrayList<String> sentencesSceneF2;
+	private ArrayList<String> sentencesSceneF3;
 	private float ia1TextTime;
 	@Override
 	public void render() {		
@@ -267,6 +337,21 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		if (scene == 3) {
 			drawInterlude(delta);
 			drawText(delta, sentencesScene3);
+		}
+		
+		if (scene == 4) {
+			drawInterlude(delta);
+			drawText(delta, sentencesSceneF1);
+		}
+		
+		if (scene == 5) {
+			drawInterlude(delta);
+			drawText(delta, sentencesSceneF2);
+		}
+		
+		if (scene == 6) {
+			drawInterlude(delta);
+			drawText(delta, sentencesSceneF3);
 		}
 		
 		if (scene == 1) {
@@ -298,7 +383,8 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			batch.end();
 			
 			mapRenderer.render();
-			
+			itemsRenderer.render(batch, mapItems);
+
 			batch.begin();
 			// sprite.draw(batch);
 			
@@ -339,6 +425,11 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 				}
 			}
 			
+			inventoryRenderer.render(inventory);
+			if (selectedItem != null) {
+				inventoryRenderer.renderItem(selectedItem);
+			}
+
 			dialogRenderer.render(currentDialog);
 		}
 	}
@@ -520,6 +611,45 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 					sayText = null;
 					setCurrentDialog(null);
 				}
+
+				Item item = itemsRenderer.selectItem(clickV);
+				if (item != null) {
+					if (item.isPickable()) {
+						inventory.add(item);
+						mapItems.remove(item);
+					}
+				}
+
+				item = inventoryRenderer.select(screenX, screenY);
+
+				if (item != null) {
+					if (selectedItem == null) {
+						selectedItem = item;
+					} else {
+						Item crafted = itemCrafter.combine(selectedItem, item);
+						if (crafted != null) {
+							inventory.remove(item);
+							inventory.remove(selectedItem);
+							inventory.add(crafted);
+						}
+
+						selectedItem = null;
+					}
+				} else {
+					if (selectedItem != null) {
+						Item mapItem = itemsRenderer.selectItem(clickV);
+						if (mapItem != null) {
+							String say = itemCrafter.useOn(selectedItem, mapItem);
+							if (say != null) {
+								setSay(say);
+								mapItem.remove(mapItem);
+								inventory.remove(selectedItem);
+							}
+						}
+					}
+
+					selectItem = null;
+				}
 			}
 		}
 		
@@ -607,6 +737,17 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		if (opt1 != null) {
 			opt1Over = opt1Rect.contains(clickV.x, clickV.y);
 		}
+
+		Item item = inventoryRenderer.select(screenX, screenY);
+		if (item == null) {
+			item = itemsRenderer.selectItem(clickV);	
+		}
+
+		if (item != null) {
+			if (sayText == null) {
+				say(itemInformation.getInfo(item));
+			}
+		}
 		
 		return true;
 	}
@@ -654,6 +795,10 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		this.camera = camera;
 	}
 
+	public float getZoom() {
+		return zoom;
+	}
+
 	public float getCamX() {
 		return camX;
 	}
@@ -680,5 +825,9 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 
 	public void dialogEnd() {
 		currentDialog = null;
+	}
+
+	public TextureAtlas getAtlas() {
+		return atlas;
 	}
 }

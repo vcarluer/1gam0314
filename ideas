@@ -81,9 +81,28 @@ fbi=> Il n'est plus recherché et tout redevient comme avant
 mails=> Il se fait beaucoup d'argent mais fini en prise à cause du fbi
 
 
-items à crafter et à donner aux ia
+items à crafter et à donner aux ia:
 cadre photo (cadre, papier photo)
 casque rv (casque, cable)
 un coupe papier (manche, une petite lame)
-une enveloppe dans un poubelle
+// une enveloppe dans une poubelle
+
+
+RAF
+côté dynamique du système de dialogue (uniquement exit et item)
+Level (cf. draft papier)
+* items: cadre, photo, casque, cable, manche, lame, clé 1, clé 2, clé 3, clé
+graphique items
+* inventaire
+* move vue sur survol souris
+* dialogue final
+dialogues ia 1 2 3
+tête zoomé neon, ia1, ia2, ia3
+ennemi
+tirs
+* final
+
+
+
+
 
