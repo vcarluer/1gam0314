@@ -1,5 +1,7 @@
 package gamers.associate;
 
+import java.util.ArrayList;
+
 public class DialogManager {
 	private DialNode rootNode;
 	private DialNode cursor;
@@ -20,35 +22,57 @@ public class DialogManager {
 		}
 	}
 	
-	public String getNextSay() {
-		String say = "";
-		if (cursor != null) {
-			say = cursor.getSay();
-			
-			DialNode nextNode = gotoNextNode(cursor);
-			if (nextNode != null) {				
-				cursor = nextNode;
-			}
-		}	
-		
-		return say;
-	}
-	
-	private DialNode gotoNextNode(DialNode localCursor) {
+	private DialNode gotoNextNodeNPC(DialNode localCursor) {
 		if (localCursor != (null)) {						
 			for (DialNode node : localCursor.getChilds()) {
-				if (!node.isDone()) {
+				if (!node.isDone() && node.getWho() == DialWho.NPC) {
 					return node;
 				}									
 			}
 			
 			localCursor.setDone(true);
 			if (localCursor.getParent() != null) {
-				return gotoNextNode(localCursor.getParent());
+				return gotoNextNodeNPC(localCursor.getParent());
 			}
 		}
 		
 		return null;
 	}
+	
+	public boolean atEnd() {
+		return cursor == null;
+	}
+	
+	public void gotoNextNodeNPC() {
+		cursor = gotoNextNodeNPC(cursor);
+	}
 
+	public String getNPCSay() {
+		if (cursor != null) {
+			return cursor.getSay();
+		} else {
+			return null;
+		}
+		
+	}
+
+	public ArrayList<DialNode> getPCOptions() {
+		if (cursor != null) {
+			ArrayList<DialNode> pcOptions = new ArrayList<DialNode>(); 
+			for (DialNode node : cursor.getChilds()) {
+				if (node.getWho() == DialWho.Player) {
+					pcOptions.add(node);
+				}
+			}
+			
+			return pcOptions;
+		} else {
+			return null;
+		}
+	}
+
+	public void setNextNpc(DialNode dialNode) {
+		cursor = dialNode;
+		gotoNextNodeNPC();
+	}
 }

@@ -72,7 +72,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private int fontSize = 10;
 	
 	private BitmapFont fontIntro;
-	private int fontSizeIntro = 30;
+	private int fontSizeIntro = 40;
 	
 	private float sayLife = 3f;
 	private String sayText;
@@ -110,8 +110,12 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	
 	private DialogManager ia1Dial;
 	
+	public static Aitrinity game;
+	
+	private DialogRenderer dialogRenderer;
 	@Override
-	public void create() {		
+	public void create() {
+		game = this;
 		passable = new HashSet<Vector2>();
 		testV = new Vector2();
 		targetV = new Vector2();
@@ -124,8 +128,8 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 		
-		player.x = worldCoord(3);
-		player.y = worldCoord(3);
+		player.x = worldCoord(5);
+		player.y = worldCoord(8);
 		player.width = tileSize;
 		player.height = tileSize;
 		
@@ -136,12 +140,12 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		ia1.height = 64;
 		opt1Rect = new Rectangle();
 		
-		camera = new OrthographicCamera(w, h);
-		camX = (w / 2f) * zoom;
-		camY = (h / 2f) * zoom;
-		camera.translate(camX, camY);
-		camera.zoom = zoom;
-		camera.update();
+		setCamera(new OrthographicCamera(w, h));
+		setCamX((w / 2f) * zoom);
+		setCamY((h / 2f) * zoom);
+		getCamera().translate(getCamX(), getCamY());
+		getCamera().zoom = zoom;
+		getCamera().update();
 		batch = new SpriteBatch();
 		stateTime = 0f;
 		
@@ -154,10 +158,10 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		ia1Frames = atlas.findRegions("ia1/activate");
 		ia1Animation = new Animation(0.12f, ia1Frames);
 		
-		fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("data/thirteen.ttf"));
-		font = fontGenerator.generateFont(fontSize);
-		font.setColor(Color.BLACK);
-		fontIntro = fontGenerator.generateFont(fontSizeIntro);
+		setFontGenerator(new FreeTypeFontGenerator(Gdx.files.internal("data/upheavtt.ttf")));
+		setFont(getFontGenerator().generateFont(fontSize));
+		getFont().setColor(Color.BLACK);
+		fontIntro = getFontGenerator().generateFont(fontSizeIntro);
 		fontIntro.setColor(Color.WHITE);
 		
 		effects = new HashSet<PooledEffect>();
@@ -221,6 +225,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		sentencesScene3.add("I have to go back quickly");
 		sentencesScene3.add("I have to find the trinity AI");
 		
+		dialogRenderer = new DialogRenderer();
 	}
 
 	private int mapCoord(float val) {
@@ -273,18 +278,18 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 				sayText = null;
 				opt1 = null;
 				ia1Text = null;
-				currentDialog = null;
+				setCurrentDialog(null);
 			}
 					
-			camX = player.x;
-			camY = player.y;
-			camera.position.x = player.x;
-			camera.position.y = player.y;
-			camera.zoom = zoom;
-			camera.update();
-			batch.setProjectionMatrix(camera.combined);
+			setCamX(player.x);
+			setCamY(player.y);
+			getCamera().position.x = player.x;
+			getCamera().position.y = player.y;
+			getCamera().zoom = zoom;
+			getCamera().update();
+			batch.setProjectionMatrix(getCamera().combined);
 			
-			mapRenderer.setView(camera);
+			mapRenderer.setView(getCamera());
 			
 			
 			batch.begin();
@@ -334,38 +339,16 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 				}
 			}
 			
-			if (currentDialog != null) {				
-				if (ia1Text != null && !ia1Text.equals("")) {
-					ia1TextTime += delta;
-					if (ia1TextTime < sayLife) {
-						setSayRect(ia1Text, 0, textureIa1, ia1.x, ia1.y, ia1TextRect, player);
-						say(ia1Text, ia1TextRect, false);
-					} else {
-						ia1Text = null;
-					}
-				} else {
-					nextIa1dial();
-				}
-			}			
-			
-			if (opt1 != null) {
-				setSayRect(opt1, 1, texturePlayer, player.x, player.y, opt1Rect, referenceTalk);
-				say(opt1, opt1Rect, true);
-			}
+			dialogRenderer.render(currentDialog);
 		}
 	}
 	
-	private void nextIa1dial() {
-		ia1Text = ia1Dial.getNextSay();
-		ia1TextTime = 0;
-	}
-	
 	private void drawInterlude(float delta) {
-		camera.zoom = 1f;
-		camera.position.x = 0;
-		camera.position.y = 0;
-		camera.update();
-		batch.setProjectionMatrix(camera.combined);
+		getCamera().zoom = 1f;
+		getCamera().position.x = 0;
+		getCamera().position.y = 0;
+		getCamera().update();
+		batch.setProjectionMatrix(getCamera().combined);
 		batch.begin();
 		introEffect.draw(batch, delta);
 		batch.draw(introAnimation.getKeyFrame(stateTime, true), -128, -128, 0, 0, 256, 256, 1, 1, 0);
@@ -393,7 +376,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		tempRect.width = bounds.width;
 		tempRect.height = bounds.height;
 		
-		shapeRenderer.setProjectionMatrix(camera.combined);
+		shapeRenderer.setProjectionMatrix(getCamera().combined);
 		shapeRenderer.begin(ShapeType.Filled);
 		shapeRenderer.setColor(new Color(0.4f, 1f, 0, 1f));
 		int padding = 25;
@@ -410,7 +393,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	}
 	
 	private void setSayRect(String text, int idx, TextureRegion texture, float x, float y, Rectangle rect, Rectangle relativeTalk) {
-		TextBounds bounds = font.getBounds(text);
+		TextBounds bounds = getFont().getBounds(text);
 //		if (relativeTalk == null || relativeTalk.x < x) {
 //			rect.x = x + texture.getRegionWidth();
 //		} else {
@@ -428,7 +411,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private float paddingIn = 4;
 	
 	private void say(String text, Rectangle rect, boolean focus) {
-		shapeRenderer.setProjectionMatrix(camera.combined);
+		shapeRenderer.setProjectionMatrix(getCamera().combined);
 		
 		shapeRenderer.begin(ShapeType.Filled);
 		
@@ -447,13 +430,13 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		shapeRenderer.rect(rect.x - paddingIn, rect.y-paddingIn, rect.width + paddingIn * 2, rect.height + paddingIn * 2);
 		shapeRenderer.end();
 		if (opt1Over && focus) {
-			font.setColor(new Color(0.06f, 0.3f, 0.5f, 1));
+			getFont().setColor(new Color(0.06f, 0.3f, 0.5f, 1));
 		} else {
-			font.setColor(new Color(0.06f, 0.3f, 0, 1));
+			getFont().setColor(new Color(0.06f, 0.3f, 0, 1));
 		}
 		
 		batch.begin();
-		font.draw(batch, text, rect.x, rect.y + rect.height);
+		getFont().draw(batch, text, rect.x, rect.y + rect.height);
 		batch.end();
 		
 		rect.x = tempRect.x;
@@ -469,9 +452,9 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 
 	@Override
 	public void resize(int width, int height) {
-		camera.viewportWidth = width;
-		camera.viewportHeight = height;
-		camera.update();
+		getCamera().viewportWidth = width;
+		getCamera().viewportHeight = height;
+		getCamera().update();
 	}
 
 	@Override
@@ -511,8 +494,8 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private DialogManager currentDialog;
 	
 	private void setClickV(int screenX, int screenY) {
-		clickV.x = (screenX - Gdx.graphics.getWidth() / 2) * zoom + camX;
-		clickV.y = (Gdx.graphics.getHeight() / 2f - screenY) * zoom + camY;
+		clickV.x = (screenX - Gdx.graphics.getWidth() / 2) * zoom + getCamX();
+		clickV.y = (Gdx.graphics.getHeight() / 2f - screenY) * zoom + getCamY();
 	}
 	
 	@Override
@@ -525,14 +508,18 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		
 		setClickV(screenX, screenY);
 		if (button == 0) {
-			if (ia1.contains(clickV)) {
-				currentDialog = ia1Dial;
-				currentDialog.startDialog();
-				ia1Text = null;
-			}
-			else {
-				sayText = null;
-				currentDialog = null;
+			if (currentDialog != null) {
+				dialogRenderer.clickOn(screenX, screenY);
+			} else {
+				if (ia1.contains(clickV)) {
+					setCurrentDialog(ia1Dial);
+					getCurrentDialog().startDialog();
+					ia1Text = null;
+				}
+				else {
+					sayText = null;
+					setCurrentDialog(null);
+				}
 			}
 		}
 		
@@ -615,6 +602,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
+		dialogRenderer.mouseOn(screenX, screenY);
 		setClickV(screenX, screenY);
 		if (opt1 != null) {
 			opt1Over = opt1Rect.contains(clickV.x, clickV.y);
@@ -640,5 +628,57 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	public void setValues(Aitrinity target, int tweenType, float[] newValues) {
 		target.player.x = newValues[0];
 		target.player.y = newValues[1];
+	}
+
+	public DialogManager getCurrentDialog() {
+		return currentDialog;
+	}
+
+	public void setCurrentDialog(DialogManager currentDialog) {
+		this.currentDialog = currentDialog;
+	}
+
+	public BitmapFont getFont() {
+		return font;
+	}
+
+	public void setFont(BitmapFont font) {
+		this.font = font;
+	}
+
+	public OrthographicCamera getCamera() {
+		return camera;
+	}
+
+	public void setCamera(OrthographicCamera camera) {
+		this.camera = camera;
+	}
+
+	public float getCamX() {
+		return camX;
+	}
+
+	public void setCamX(float camX) {
+		this.camX = camX;
+	}
+
+	public float getCamY() {
+		return camY;
+	}
+
+	public void setCamY(float camY) {
+		this.camY = camY;
+	}
+
+	public FreeTypeFontGenerator getFontGenerator() {
+		return fontGenerator;
+	}
+
+	public void setFontGenerator(FreeTypeFontGenerator fontGenerator) {
+		this.fontGenerator = fontGenerator;
+	}
+
+	public void dialogEnd() {
+		currentDialog = null;
 	}
 }
