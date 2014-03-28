@@ -19,7 +19,7 @@ public class DialogRenderer {
 	private SpriteBatch batch;
 	private ShapeRenderer shapeRenderer;
 	private BitmapFont font;
-	private int fontSize = 35;
+	private int fontSize = 10;
 	private DialogManager dialog;
 	int paddingH = 20;
 	int paddingW = 50;
@@ -52,12 +52,11 @@ public class DialogRenderer {
 	public void render(DialogManager dialogManager) {
 		if (dialog == null && dialogManager != null) {
 			reset();
-			dialogManager.gotoNextNodeNPC();
 		}
 		
 		dialog = dialogManager;
 		if (dialog != null) {
-			if (!dialog.atEnd()) {				
+			if (!dialog.atEnd()) {
 				renderNPC();
 				renderPC();
 			} else {
@@ -72,45 +71,82 @@ public class DialogRenderer {
 		optRectInit = false;
 		sayingNPC.clear();
 		sayingPC.clear();
-		selectedNode = null;
 		sayTime = 0;
 		sayIdx = 0;
 		npcSayEnd = false;
 	}
 	private void renderPC() {
-		if (selectedNode != null) {
-			float delta = Gdx.graphics.getDeltaTime();
-			sayTime += delta;
+		String say = dialog.getPCSay();
+		if (say != null && !say.equals("")) {
+			if (sayingPC.size() == 0) {
+				String[] sentences = say.split("\\.");
+				for (String sentence : sentences) {
+					sayingPC.add(sentence.trim());
+				}
+			}		
+		} else {
+			sayingPC.clear();
+		}
+		
+		if (sayingPC.size() > 0) {
+			sayTime += Gdx.graphics.getDeltaTime();
 			if (sayTime > sayLife) {
 				sayTime = 0;
 				sayIdx++;
 			}
 			
-			if (sayIdx >= sayingPC.size()) {
+			if (sayIdx >= sayingNPC.size()) {
 				pcEndSay();
 			} else {
 				renderBackPC();
-				String write = sayingPC.get(sayIdx).trim();
-				TextBounds bounds = font.getBounds(write);
-				batch.begin();
-				font.setColor(Color.WHITE);
-				font.draw(batch, write, 
-						-Gdx.graphics.getWidth() / 2f + paddingW + paddingInW, 
-						- Gdx.graphics.getHeight() / 2f + paddingH + dialogH / 2 + bounds.height / 2);
-				batch.end();
-			}
+				renderTextPC();
+			}						
 		} else {
 			optNodes = dialog.getPCOptions();
-			if (optNodes.size() != 0) {
+			if (optNodes != null) {
 				renderBackPC();
-				renderTextPC();
-			} else {
-				if (npcSayEnd) {
-					dialog.gotoNextNodeNPC();
-					reset();
-				}
+				renderOptPC();
 			}
 		}
+		
+//			
+//		
+//		
+//		if (selectedNode != null) {
+//			float delta = Gdx.graphics.getDeltaTime();
+//			sayTime += delta;
+//			if (sayTime > sayLife) {
+//				sayTime = 0;
+//				sayIdx++;
+//			}
+//			
+//			if (sayIdx >= sayingPC.size()) {
+//				pcEndSay();
+//			} else {
+//				renderBackPC();
+//				String write = sayingPC.get(sayIdx).trim();
+//				TextBounds bounds = font.getBounds(write);
+//				batch.begin();
+//				font.setColor(Color.WHITE);
+//				font.draw(batch, write, 
+//						-Gdx.graphics.getWidth() / 2f + paddingW + paddingInW, 
+//						- Gdx.graphics.getHeight() / 2f + paddingH + dialogH / 2 + bounds.height / 2);
+//				batch.end();
+//			}
+//		} else {
+//			optNodes = dialog.getPCOptions();
+//			if (optNodes != null) {
+//				if (optNodes.size() != 0) {
+//					renderBackPC();
+//					renderTextPC();
+//				} else {
+//					if (npcSayEnd) {
+//						dialog.gotoNextNodeNPC();
+//						reset();
+//					}
+//				}
+//			}
+//		}
 	}
 	
 	private void renderNPC() {		
@@ -123,8 +159,8 @@ public class DialogRenderer {
 				}
 			}		
 		} else {
-			npcSayEnd = true;
-		}	
+			sayingNPC.clear();
+		}
 	
 		if (sayingNPC.size() > 0) {
 			sayTime += Gdx.graphics.getDeltaTime();
@@ -142,8 +178,7 @@ public class DialogRenderer {
 			renderTextNPC();
 		}
 	}
-	private void renderTextPC() {
-		
+	private void renderOptPC() {
 		shapeRenderer.setColor(Color.WHITE);
 		shapeRenderer.begin(ShapeType.Line);
 		
@@ -199,6 +234,19 @@ public class DialogRenderer {
 		batch.end();
 
 	}
+	
+	private void renderTextPC() {
+		batch.begin();
+		String write = sayingPC.get(sayIdx);
+		TextBounds bounds = font.getBounds(write);
+		font.setColor(Color.WHITE);
+		font.setColor(Color.WHITE);
+		font.draw(batch, write, 
+				-Gdx.graphics.getWidth() / 2f + paddingW + paddingInW, 
+				- Gdx.graphics.getHeight() / 2f + paddingH + dialogH / 2 + bounds.height / 2);
+		batch.end();
+	}
+	
 	private void renderTextNPC() {
 		batch.begin();
 		String write = sayingNPC.get(sayIdx);
@@ -207,6 +255,7 @@ public class DialogRenderer {
 		font.draw(batch, write, -Gdx.graphics.getWidth() / 2f + paddingW + paddingInW, Gdx.graphics.getHeight() / 2f - paddingH - dialogH / 2f + bounds.height / 2f);
 		batch.end();
 	}
+	
 	private void renderBackNPC() {
 		shapeRenderer.setColor(Color.GREEN);
 		shapeRenderer.begin(ShapeType.Filled);
@@ -223,7 +272,7 @@ public class DialogRenderer {
 	}
 	
 	int optOver = -1;
-	private DialNode selectedNode;
+	
 	public void mouseOn(int screenX, int screenY) {
 		optOver = -1;
 		if (dialog != null) {
@@ -240,21 +289,12 @@ public class DialogRenderer {
 	
 	public void clickOn(int screenX, int screenY) {
 		if (dialog != null) {
-			if (optRect.size() == 0) {
-				dialog.gotoNextNodeNPC();
-			} else {
+			if (optRect.size() > 0) {
 				int i = 0;
 				for (Rectangle rect : optRect) {
 					if (rect.contains(getCamCorrection(screenX, screenY))) {
-						selectedNode = optNodes.get(i);
-						String[] sentences = selectedNode.getSay().split("\\.");
-						sayIdx = 0;
-						sayTime = 0;
-						
-						for (String sentence : sentences) {
-							sayingPC.add(sentence);
-						}
-						
+						dialog.chooseOption(optNodes.get(i));
+						reset();
 						break;
 					}
 					i++;
@@ -264,7 +304,7 @@ public class DialogRenderer {
 	}
 	
 	private void pcEndSay() {
-		dialog.setNextNpc(selectedNode);
+		dialog.gotoNextNodeNPC();
 		reset();
 	}
 	

@@ -22,29 +22,25 @@ public class DialogManager {
 		}
 	}
 	
-	private DialNode gotoNextNodeNPC(DialNode localCursor) {
-		if (localCursor != (null)) {						
-			for (DialNode node : localCursor.getChilds()) {
-				if (!node.isDone()) {
-					return node;
-				}									
-			}
-			
-			localCursor.setDone(true);
-			if (localCursor.getParent() != null) {
-				return gotoNextNodeNPC(localCursor.getParent());
-			}
-		}
-		
-		return null;
-	}
-	
 	public boolean atEnd() {
 		return cursor == null;
 	}
 	
 	public void gotoNextNodeNPC() {
-		cursor = gotoNextNodeNPC(cursor);
+		if (cursor != (null)) {						
+			for (DialNode node : cursor.getChilds()) {
+				if (!node.isDone()) {
+					cursor = node;
+					break;
+				}									
+			}
+			
+			cursor.setDone(true);
+			if (cursor.getParent() != null) {
+				cursor = cursor.getParent();
+				gotoNextNodeNPC();
+			}
+		}		
 	}
 
 	public String getNPCSay() {
@@ -55,24 +51,39 @@ public class DialogManager {
 		}
 		
 	}
-
-	public ArrayList<DialNode> getPCOptions() {
-		if (cursor != null) {
-			ArrayList<DialNode> pcOptions = new ArrayList<DialNode>(); 
-			for (DialNode node : cursor.getChilds()) {
-				if (node.getWho() == DialWho.Player) {
-					pcOptions.add(node);
-				}
-			}
-			
-			return pcOptions;
+	
+	public String getPCSay() {
+		if (cursor != null && cursor.getWho() == DialWho.Player) {
+			return cursor.getSay();
 		} else {
 			return null;
 		}
+		
 	}
 
-	public void setNextNpc(DialNode dialNode) {
+	public ArrayList<DialNode> getPCOptions() {
+		ArrayList<DialNode> pcOptions = null;
+		if (cursor != null) {
+			if (cursor.getWho() == DialWho.NPC || cursor.getWho() == null) {
+				pcOptions = new ArrayList<DialNode>(); 
+				for (DialNode node : cursor.getChilds()) {
+					if (node.getWho() == DialWho.Player) {
+						pcOptions.add(node);
+					}
+				}
+			}
+		}
+		
+		return pcOptions;
+	}
+
+	public void chooseOption(DialNode dialNode) {
+		if (cursor != null) {
+			if (cursor.getStrategy() == DialStrat.Or) {
+				cursor.setDone(true);
+			}
+		}
+		
 		cursor = dialNode;
-		gotoNextNodeNPC();
 	}
 }

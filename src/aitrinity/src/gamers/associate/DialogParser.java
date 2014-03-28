@@ -50,14 +50,14 @@ public class DialogParser {
 			node.setWho(DialWho.NPC);
 			node.setStrategy(DialStrat.Or);
 			
+			node.setStrategy(DialStrat.Or);
+			
 			if (toParse.startsWith(">")) {
-				node.setWho(DialWho.Player);
-				node.setStrategy(DialStrat.Or);
+				node.setWho(DialWho.Player);				
 				toParse = toParse.substring(1);
 			}
 			
-			if (toParse.startsWith("#")) {
-				node.setWho(DialWho.Player);
+			if (toParse.startsWith("#")) {			
 				node.setStrategy(DialStrat.And);
 				toParse = toParse.substring(1);
 			}
