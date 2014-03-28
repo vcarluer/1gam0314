@@ -130,7 +130,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	@Override
 	public void create() {
 		inventory = new ArrayList<Item>();
-		mapItems = new ArrayList<Item>()
+		mapItems = new ArrayList<Item>();
 		npcs = new ArrayList<NPC>();
 
 		game = this;
@@ -278,20 +278,20 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		inventoryRenderer = new InventoryRenderer();
 		itemCrafter = new ItemCrafter();
 		itemInfo = new ItemInfo();
-		Item cadre = new Item("cadre", new Rectangle(worldCoord(5), worldCoord(5), 0, 0);
+		Item cadre = new Item("cadre", new Rectangle(worldCoord(5), worldCoord(5), 0, 0));
 		mapItems.add(cadre);
-		Item photo = new Item("photo", new Rectangle(worldCoord(7), worldCoord(6), 0, 0);
+		Item photo = new Item("photo", new Rectangle(worldCoord(7), worldCoord(6), 0, 0));
 		mapItems.add(photo);
-		Item photo = new Item("casque", new Rectangle(worldCoord(9), worldCoord(6), 0, 0);
+		Item casque = new Item("casque", new Rectangle(worldCoord(9), worldCoord(6), 0, 0));
 		mapItems.add(photo);
-		Item photo = new Item("cable", new Rectangle(worldCoord(11), worldCoord(6), 0, 0);
+		Item cable = new Item("cable", new Rectangle(worldCoord(11), worldCoord(6), 0, 0));
 		mapItems.add(photo);
-		Item photo = new Item("manche", new Rectangle(worldCoord(13), worldCoord(6), 0, 0);
+		Item manche = new Item("manche", new Rectangle(worldCoord(13), worldCoord(6), 0, 0));
 		mapItems.add(photo);
-		Item photo = new Item("lame", new Rectangle(worldCoord(15), worldCoord(6), 0, 0);
+		Item lame = new Item("lame", new Rectangle(worldCoord(15), worldCoord(6), 0, 0));
 		mapItems.add(photo);
 
-		Item porte = new Item("porte", new Rectangle(woorldCoord(10), worldCoord(10), 0, 0, false);
+		Item porte = new Item("porte", new Rectangle(worldCoord(10), worldCoord(10), 0, 0), false);
 		mapItems.add(porte);		
 	}
 
@@ -427,7 +427,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			
 			inventoryRenderer.render(inventory);
 			if (selectedItem != null) {
-				inventoryRenderer.renderItem(selectedItem);
+				inventoryRenderer.renderItem(selectedItem, Gdx.input.getX(), Gdx.input.getY());
 			}
 
 			dialogRenderer.render(currentDialog);
@@ -642,13 +642,13 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 							String say = itemCrafter.useOn(selectedItem, mapItem);
 							if (say != null) {
 								setSay(say);
-								mapItem.remove(mapItem);
+								mapItems.remove(mapItem);
 								inventory.remove(selectedItem);
 							}
 						}
 					}
 
-					selectItem = null;
+					selectedItem = null;
 				}
 			}
 		}
@@ -745,7 +745,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 
 		if (item != null) {
 			if (sayText == null) {
-				say(itemInformation.getInfo(item));
+				say(itemInfo.getInfo(item));
 			}
 		}
 		

@@ -1,5 +1,7 @@
 package gamers.associate;
 
+import com.badlogic.gdx.math.Rectangle;
+
 public class ItemCrafter {
 	public Item combine(Item item1, Item item2) {
 		Item item = null;
@@ -47,16 +49,20 @@ public class ItemCrafter {
 		if (item != null) {
 			return item;
 		}
+		
+		return null;
 	}
 
-	private Item tryCombine(Item item1, Item item2, String id1, String id2, idOut) {
+	private Item tryCombine(Item item1, Item item2, String id1, String id2, String idOut) {
 		if ((item1.id.equals(id1) || item1.id.equals(id2)) && (item2.id.equals(id1) || item2.id.equals(id2))) {
 			return new Item(idOut, new Rectangle(0, 0, 0, 0));
 		}
+		
+		return null;		
 	}
 	
-	public String useOn(selectedItem, mapItem) {
-		returnSay = null;
+	public String useOn(Item selectedItem, Item mapItem) {
+		String returnSay = null;
 		if (selectedItem.equals("cle") && mapItem.id.equals("porte")) {
 			returnSay = "La porte s'est ouverte !";
 		}
