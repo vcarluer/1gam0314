@@ -283,13 +283,13 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		Item photo = new Item("photo", new Rectangle(worldCoord(7), worldCoord(6), 0, 0));
 		mapItems.add(photo);
 		Item casque = new Item("casque", new Rectangle(worldCoord(9), worldCoord(6), 0, 0));
-		mapItems.add(photo);
+		mapItems.add(casque);
 		Item cable = new Item("cable", new Rectangle(worldCoord(11), worldCoord(6), 0, 0));
-		mapItems.add(photo);
+		mapItems.add(cable);
 		Item manche = new Item("manche", new Rectangle(worldCoord(13), worldCoord(6), 0, 0));
-		mapItems.add(photo);
+		mapItems.add(manche);
 		Item lame = new Item("lame", new Rectangle(worldCoord(15), worldCoord(6), 0, 0));
-		mapItems.add(photo);
+		mapItems.add(lame);
 
 		Item porte = new Item("porte", new Rectangle(worldCoord(10), worldCoord(10), 0, 0), false);
 		mapItems.add(porte);		
@@ -425,7 +425,10 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 				}
 			}
 			
-			inventoryRenderer.render(inventory);
+			if (currentDialog == null) {
+				inventoryRenderer.render(inventory);
+			}
+			
 			if (selectedItem != null) {
 				inventoryRenderer.renderItem(selectedItem, Gdx.input.getX(), Gdx.input.getY());
 			}
@@ -631,6 +634,12 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 							inventory.remove(item);
 							inventory.remove(selectedItem);
 							inventory.add(crafted);
+							String info = itemInfo.getInfo(crafted);
+							if (info != null) {
+								setSay("Hey! " + info);
+							}
+						} else {
+							setSay("What am I trying to do...");
 						}
 
 						selectedItem = null;
@@ -644,6 +653,8 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 								setSay(say);
 								mapItems.remove(mapItem);
 								inventory.remove(selectedItem);
+							} else {
+								setSay("I cannot do that");
 							}
 						}
 					}
@@ -659,9 +670,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 					currentTL.free();
 				}
 				
-				move = false;
-				String say = "Hop";
-				setSay(say);
+				move = false;				
 			}
 			
 			if (!dead) {
@@ -697,7 +706,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 							testV.x = mapCoord(player.x + texturePlayer.getRegionWidth() / 2f);
 							testV.y = mapCoord(player.y);
 							if (passable.contains(testV)) {
-								say = "What is there";
+								
 							} else {
 								say = null;
 								dead = true;
@@ -734,18 +743,18 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	public boolean mouseMoved(int screenX, int screenY) {
 		dialogRenderer.mouseOn(screenX, screenY);
 		setClickV(screenX, screenY);
-		if (opt1 != null) {
-			opt1Over = opt1Rect.contains(clickV.x, clickV.y);
-		}
+		
+		if (currentDialog == null) {
+			Item item = inventoryRenderer.select(screenX, screenY);
+			if (item == null) {
+				item = itemsRenderer.selectItem(clickV);	
+			}
 
-		Item item = inventoryRenderer.select(screenX, screenY);
-		if (item == null) {
-			item = itemsRenderer.selectItem(clickV);	
-		}
-
-		if (item != null) {
-			if (sayText == null) {
-				say(itemInfo.getInfo(item));
+			if (item != null) {
+				String info = itemInfo.getInfo(item);
+				if (info != null && (sayText == null || !sayText.equals(info))) {
+					setSay(itemInfo.getInfo(item));
+				}
 			}
 		}
 		

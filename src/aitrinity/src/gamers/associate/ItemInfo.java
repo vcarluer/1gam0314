@@ -9,7 +9,7 @@ public class ItemInfo {
 		info = new HashMap<String, String>();
 		info.put("cadre", "A 3 dimensional frame");
 		info.put("photo", "A compressed image of my ex");
-		info.put("casque", "An RV helmet, wire is missing");
+		info.put("casque", "A VR helmet, wire is missing");
 		info.put("cable", "A neural wire cable");
 		info.put("manche", "A wood textured handle");
 		info.put("lame", "A shiny chrome blade");
@@ -21,8 +21,9 @@ public class ItemInfo {
 		info.put("cle23", "The part of a key");
 		info.put("cle", "The key to open the firewall");
 		info.put("photoex", "The 3d photo of my ex");
-		info.put("cle", "The key to open the firewall");
-		info.put("cle", "The key to open the firewall");
+		info.put("casquerv", "A fully working VR helmet");
+		info.put("coupepapier", "A little blade to cut mail");
+		info.put("porte", "The main firewall. I need a key");
 
 	}
 

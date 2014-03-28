@@ -31,7 +31,7 @@ public class DialogManager {
 			for (DialNode node : cursor.getChilds()) {
 				if (!node.isDone()) {
 					cursor = node;
-					break;
+					return;
 				}									
 			}
 			

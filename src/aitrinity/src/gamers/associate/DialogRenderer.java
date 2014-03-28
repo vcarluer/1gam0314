@@ -19,7 +19,7 @@ public class DialogRenderer {
 	private SpriteBatch batch;
 	private ShapeRenderer shapeRenderer;
 	private BitmapFont font;
-	private int fontSize = 10;
+	private int fontSize = 35;
 	private DialogManager dialog;
 	int paddingH = 20;
 	int paddingW = 50;
@@ -74,6 +74,7 @@ public class DialogRenderer {
 		sayTime = 0;
 		sayIdx = 0;
 		npcSayEnd = false;
+		optOver = -1;
 	}
 	private void renderPC() {
 		String say = dialog.getPCSay();
@@ -297,8 +298,11 @@ public class DialogRenderer {
 						reset();
 						break;
 					}
+					
 					i++;
 				}
+			} else {
+				dialog.gotoNextNodeNPC();
 			}
 		}
 	}

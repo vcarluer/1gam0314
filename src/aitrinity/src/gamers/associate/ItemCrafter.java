@@ -58,7 +58,7 @@ public class ItemCrafter {
 			return new Item(idOut, new Rectangle(0, 0, 0, 0));
 		}
 		
-		return null;		
+		return null;
 	}
 	
 	public String useOn(Item selectedItem, Item mapItem) {

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
@@ -28,31 +29,36 @@ public class InventoryRenderer {
 	}
 
 	public void render(ArrayList<Item> inventory) {
-		int marge = 10;
-		int padding = 10;
-		shapeRenderer.begin(ShapeType.Filled);
-		shapeRenderer.rect(-Gdx.graphics.getWidth() / 2f + marge, -Gdx.graphics.getHeight() + marge, Gdx.graphics.getWidth() - 2 * marge, 64);
-		shapeRenderer.end();
-		batch.begin();
-		int i = 0;
-		items.clear();
-		for (Item item : inventory) {
-			AtlasRegion region = ItemsRenderer.instance.getTexture(item.id);
-			Rectangle rect = new Rectangle(-Gdx.graphics.getWidth() / 2f + marge + padding + i * region.getRegionWidth(), - Gdx.graphics.getHeight() + padding, region.getRegionWidth(), region.getRegionHeight());
-			items.put(rect, item);
-			batch.draw(region, rect.x, rect.y, rect.width, rect.height);
-
-			i++;
+		if (inventory.size() > 0) {
+			int marge = 10;
+			int padding = 10;
+			shapeRenderer.begin(ShapeType.Filled);
+			shapeRenderer.setColor(new Color(0.1f, 0.3f, 0, 1));
+			shapeRenderer.rect(-Gdx.graphics.getWidth() / 2f + marge, -Gdx.graphics.getHeight() / 2f + marge, Gdx.graphics.getWidth() - 2 * marge, 64);
+			shapeRenderer.end();
+			batch.begin();
+			int i = 0;
+			items.clear();
+			for (Item item : inventory) {
+				AtlasRegion region = ItemsRenderer.instance.getTexture(item.id);
+				int size = 60;
+				Rectangle rect = new Rectangle(-Gdx.graphics.getWidth() / 2f + marge + padding + i * size, - Gdx.graphics.getHeight() / 2f + padding, size, size);
+				items.put(rect, item);
+				batch.draw(region, rect.x, rect.y, rect.width, rect.height);
+	
+				i++;
+			}
+	
+			batch.end();
 		}
-
-		batch.end();
 	}
 
 	public void renderItem(Item item, int screenX, int screenY) {
 		batch.begin();
 		AtlasRegion region = ItemsRenderer.instance.getTexture(item.id);
 		Vector2 vect = getCamCorrection(screenX, screenY);
-		batch.draw(region, vect.x - region.getRegionWidth() / 2f, vect.y - region.getRegionHeight() / 2f, region.getRegionWidth(), region.getRegionHeight());
+		int size = 48;
+		batch.draw(region, vect.x - size / 2f, vect.y - size / 2f, 0, 0, size, size, 1, 1, -30);
 		batch.end();
 	}
 
