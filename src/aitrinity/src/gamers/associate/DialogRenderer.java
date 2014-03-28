@@ -57,7 +57,7 @@ public class DialogRenderer {
 		
 		dialog = dialogManager;
 		if (dialog != null) {
-			if (!dialog.atEnd()) {
+			if (!dialog.atEnd()) {				
 				renderNPC();
 				renderPC();
 			} else {
@@ -113,33 +113,33 @@ public class DialogRenderer {
 		}
 	}
 	
-	private void renderNPC() {
-		if (sayingPC.size() == 0) {
-			String say = dialog.getNPCSay();
-			if (say != null && !say.equals("")) {
-				if (sayingNPC.size() == 0) {
-					String[] sentences = say.split("\\.");
-					for (String sentence : sentences) {
-						sayingNPC.add(sentence.trim());
-					}
+	private void renderNPC() {		
+		String say = dialog.getNPCSay();
+		if (say != null && !say.equals("")) {
+			if (sayingNPC.size() == 0) {
+				String[] sentences = say.split("\\.");
+				for (String sentence : sentences) {
+					sayingNPC.add(sentence.trim());
 				}
-				
-				sayTime += Gdx.graphics.getDeltaTime();
-				if (sayTime > sayLife) {
-					sayTime = 0;
-					sayIdx++;
-				}
-				
-				if (sayIdx >= sayingNPC.size()) {
-					npcSayEnd = true;
-					sayIdx = sayingNPC.size() - 1;
-				}
-				
-				renderBackNPC();
-				renderTextNPC();
-			} else {
-				npcSayEnd = true;
+			}		
+		} else {
+			npcSayEnd = true;
+		}	
+	
+		if (sayingNPC.size() > 0) {
+			sayTime += Gdx.graphics.getDeltaTime();
+			if (sayTime > sayLife) {
+				sayTime = 0;
+				sayIdx++;
 			}
+			
+			if (sayIdx >= sayingNPC.size()) {
+				npcSayEnd = true;
+				sayIdx = sayingNPC.size() - 1;
+			}
+			
+			renderBackNPC();
+			renderTextNPC();
 		}
 	}
 	private void renderTextPC() {

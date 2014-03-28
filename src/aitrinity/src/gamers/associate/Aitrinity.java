@@ -128,8 +128,8 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 		
-		player.x = worldCoord(5);
-		player.y = worldCoord(8);
+		player.x = worldCoord(8);
+		player.y = worldCoord(12);
 		player.width = tileSize;
 		player.height = tileSize;
 		

@@ -25,7 +25,7 @@ public class DialogManager {
 	private DialNode gotoNextNodeNPC(DialNode localCursor) {
 		if (localCursor != (null)) {						
 			for (DialNode node : localCursor.getChilds()) {
-				if (!node.isDone() && node.getWho() == DialWho.NPC) {
+				if (!node.isDone()) {
 					return node;
 				}									
 			}
@@ -48,7 +48,7 @@ public class DialogManager {
 	}
 
 	public String getNPCSay() {
-		if (cursor != null) {
+		if (cursor != null && cursor.getWho() == DialWho.NPC) {
 			return cursor.getSay();
 		} else {
 			return null;
