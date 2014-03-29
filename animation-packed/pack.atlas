@@ -10,42 +10,7 @@ cable
   orig: 16, 16
   offset: 0, 0
   index: -1
-cle
-  rotate: false
-  xy: 0, 0
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-photoex
-  rotate: false
-  xy: 0, 0
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
 porte
-  rotate: false
-  xy: 0, 0
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-casquerv
-  rotate: false
-  xy: 0, 0
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-cle12
-  rotate: false
-  xy: 0, 0
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-cle23
   rotate: false
   xy: 0, 0
   size: 16, 16
@@ -59,21 +24,35 @@ manche
   orig: 16, 16
   offset: 0, 0
   index: -1
-photo
+cle3
   rotate: false
   xy: 0, 0
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
-particle
+cle23
   rotate: false
   xy: 0, 0
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
-cle2
+cle
+  rotate: false
+  xy: 0, 0
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+lame
+  rotate: false
+  xy: 0, 0
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+casquerv
   rotate: false
   xy: 0, 0
   size: 16, 16
@@ -87,21 +66,14 @@ casque
   orig: 16, 16
   offset: 0, 0
   index: -1
-cle3
+cle1
   rotate: false
   xy: 0, 0
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
-cle13
-  rotate: false
-  xy: 0, 0
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-cadre
+cle2
   rotate: false
   xy: 0, 0
   size: 16, 16
@@ -115,16 +87,44 @@ coupepapier
   orig: 16, 16
   offset: 0, 0
   index: -1
-cle1
+cle12
   rotate: false
   xy: 0, 0
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
-lame
+cle13
   rotate: false
   xy: 0, 0
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+particle
+  rotate: false
+  xy: 0, 0
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+cadre
+  rotate: false
+  xy: 16, 0
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+photo
+  rotate: false
+  xy: 32, 0
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+photoex
+  rotate: false
+  xy: 48, 0
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
