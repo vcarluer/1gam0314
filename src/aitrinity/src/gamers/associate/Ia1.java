@@ -28,6 +28,8 @@ public class Ia1 extends NPC implements IState {
 		dialog2.add(him("Mais elle s'est uploadé dans la matrice il y a 2 semaines"));
 		dialog2.add(me("Je vais regardr ce que je peux faire"));
 		dialog2.add(me("Je te recontacte dès que possible"));
+		dialog2.add(me("En attendant prends déjà cette clé tu l'a bien mérité"));
+		dialog2.add(me("#cle1"));
 	}
 	
 	private DialInfo me(String txt) {

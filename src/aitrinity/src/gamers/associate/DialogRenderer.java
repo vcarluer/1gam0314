@@ -33,7 +33,7 @@ public class DialogRenderer {
 	private AtlasRegion playerTexture;
 	private AtlasRegion ia1Texture;
 	
-	private int portraitPadding = 25;
+	private int portraitPadding = 10;
 	private float portraitSize = dialogH - 2 * portraitPadding;
 	
 	public DialogRenderer() {
@@ -50,14 +50,7 @@ public class DialogRenderer {
 	}
 	
 	private void renderTextPC(String write) {
-		batch.begin();		
-		TextBounds bounds = font.getBounds(write);
-		font.setColor(Color.WHITE);
-		font.setColor(Color.WHITE);
-		font.draw(batch, write, 
-				xTextBase + paddingInW, 
-				- Gdx.graphics.getHeight() / 2f + paddingH + dialogH / 2 + bounds.height / 2);
-		batch.end();
+		renderTextNPC(write);
 	}
 	
 	private void renderTextNPC(String write) {
@@ -69,7 +62,7 @@ public class DialogRenderer {
 	}
 	
 	private void renderBackNPC() {
-		shapeRenderer.setColor(Color.GREEN);
+		shapeRenderer.setColor(new Color(0.1f, 0.3f, 0, 1));
 		shapeRenderer.begin(ShapeType.Filled);
 		float xBase = -Gdx.graphics.getWidth() / 2f + paddingW;
 		float yBase = Gdx.graphics.getHeight() / 2f - paddingH - dialogH;
@@ -85,10 +78,10 @@ public class DialogRenderer {
 	private float xTextBase;
 	
 	private void renderBackPC() {
-		shapeRenderer.setColor(Color.GREEN);
+		shapeRenderer.setColor(new Color(0.1f, 0.3f, 0, 1));
 		shapeRenderer.begin(ShapeType.Filled);
 		float xBase = -Gdx.graphics.getWidth() / 2f + paddingW;
-		float yBase = - Gdx.graphics.getHeight() / 2f + paddingH;
+		float yBase = Gdx.graphics.getHeight() / 2f - paddingH - dialogH;
 		shapeRenderer.rect(xBase, yBase, Gdx.graphics.getWidth() - 2 * paddingW, dialogH);
 		shapeRenderer.end();
 		
@@ -96,6 +89,7 @@ public class DialogRenderer {
 		batch.begin();		
 		batch.draw(playerTexture, xBase + portraitPadding, yBase + portraitPadding, portraitSize, portraitSize);
 		batch.end();
+		
 	}
 	
 	
@@ -129,12 +123,32 @@ public class DialogRenderer {
 				text = null;
 			} else {
 				DialInfo dial = text.get(idx);
-				if (dial.who == DialWho.NPC) {
-					renderBackNPC();
-					renderTextNPC(dial.text);
+				boolean say = true;
+				if (dial.text.equals("#cle1")) {
+					say = false;
+					Aitrinity.game.takeOtherItem("cle1");
+				}
+				
+				if (dial.text.equals("#cle2")) {
+					say = false;
+					Aitrinity.game.takeOtherItem("cle2");
+				}
+				
+				if (dial.text.equals("#cle3")) {
+					say = false;
+					Aitrinity.game.takeOtherItem("cle3");
+				}
+				
+				if (say) {
+					if (dial.who == DialWho.NPC) {
+						renderBackNPC();
+						renderTextNPC(dial.text);
+					} else {
+						renderBackPC();
+						renderTextPC(dial.text);
+					}
 				} else {
-					renderBackPC();
-					renderTextPC(dial.text);
+					Aitrinity.game.setSay("La partie de la clé du firewall");
 				}
 			}			
 		}

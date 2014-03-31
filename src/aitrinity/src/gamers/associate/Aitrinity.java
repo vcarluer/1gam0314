@@ -1,6 +1,7 @@
 package gamers.associate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import aurelienribon.tweenengine.BaseTween;
@@ -111,7 +112,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	
 	public DialogRenderer dialogRenderer;
 
-	private ArrayList<Item> inventory;
+	public ArrayList<Item> inventory;
 
 	private ArrayList<Item> mapItems;
 
@@ -123,12 +124,15 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private Item selectedItem;
 
 	private ArrayList<NPC> npcs;
+	
+	private HashMap<String, Item> otherItems;
 
 	@Override
 	public void create() {
 		inventory = new ArrayList<Item>();
 		mapItems = new ArrayList<Item>();
 		npcs = new ArrayList<NPC>();
+		otherItems = new HashMap<String, Item>();
 
 		game = this;
 		passable = new HashSet<Vector2>();
@@ -290,6 +294,20 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 
 		Item porte = new Item("porte", new Rectangle(worldCoord(10), worldCoord(10), 0, 0), false);
 		mapItems.add(porte);		
+		
+		Item cle1 = new Item("cle1", new Rectangle(0, 0, 0, 0));
+		otherItems.put(cle1.id, cle1);
+		Item cle2 = new Item("cle2", new Rectangle(0, 0, 0, 0));
+		otherItems.put(cle2.id, cle2);
+		Item cle3 = new Item("cle3", new Rectangle(0, 0, 0, 0));
+		otherItems.put(cle3.id, cle3);
+	}
+	
+	public void takeOtherItem(String id) {
+		if (otherItems.containsKey(id)) {
+			inventory.add(otherItems.get(id));
+			otherItems.remove(id);
+		}
 	}
 
 	private int mapCoord(float val) {
@@ -533,7 +551,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		spriteBatch.end();
 	}
 	
-	private void setSay(String text) {
+	public void setSay(String text) {
 		sayText = text;
 		sayTime = 0;
 	}
