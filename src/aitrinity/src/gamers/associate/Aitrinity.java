@@ -89,7 +89,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	
 	private float mapRatio = 2F;
 	private float baseTileSize = 16;
-	private float tileSize = baseTileSize * mapRatio;
+	public float tileSize = baseTileSize * mapRatio;
 	
 	private HashSet<Vector2> passable;
 	private Vector2 testV;
@@ -103,7 +103,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	
 	private Rectangle tempRect;
 	
-	private int scene;
+	public int scene;
 		
 	public static Aitrinity game;
 	
@@ -290,16 +290,17 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		itemCrafter = new ItemCrafter();
 		itemInfo = new ItemInfo();
 		
-		Item photo = new Item("photo", new Rectangle(worldCoord(7), worldCoord(6), 0, 0));
+		float itemSize = 16;
+		Item photo = new Item("photo", new Rectangle(worldCoord(7), worldCoord(6), itemSize, itemSize));
 		mapItems.add(photo);
 		
-		Item cable = new Item("cable", new Rectangle(worldCoord(11), worldCoord(6), 0, 0));
+		Item cable = new Item("cable", new Rectangle(worldCoord(11), worldCoord(6), itemSize, itemSize));
 		mapItems.add(cable);
 		
-		Item lame = new Item("lame", new Rectangle(worldCoord(15), worldCoord(6), 0, 0));
+		Item lame = new Item("lame", new Rectangle(worldCoord(15), worldCoord(6), itemSize, itemSize));
 		mapItems.add(lame);
 
-		Item porte = new Item("porte", new Rectangle(worldCoord(10), worldCoord(10), 0, 0), false);
+		Item porte = new Item("porte", new Rectangle(worldCoord(7), worldCoord(14), itemSize * 2, itemSize * 2), false);
 		mapItems.add(porte);		
 		
 		Item casque = new Item("casque", new Rectangle(worldCoord(9), worldCoord(6), 0, 0));
@@ -374,10 +375,15 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		
 		if (scene == 5) {
 			drawInterlude(delta);
-			drawText(delta, sentencesSceneF2);
+			drawText(delta, sentencesSceneF1);
 		}
 		
 		if (scene == 6) {
+			drawInterlude(delta);
+			drawText(delta, sentencesSceneF2);
+		}
+		
+		if (scene == 7) {
 			drawInterlude(delta);
 			drawText(delta, sentencesSceneF3);
 		}

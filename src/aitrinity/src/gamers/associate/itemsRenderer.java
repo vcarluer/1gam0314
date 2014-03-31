@@ -28,7 +28,7 @@ public class ItemsRenderer {
 		itemsMap.clear();
 		for (Item item : items) {
 			AtlasRegion region = getTexture(item.id);
-			Rectangle showRect = new Rectangle(item.rect.x, item.rect.y, region.getRegionWidth(), region.getRegionHeight());
+			Rectangle showRect = new Rectangle(item.rect.x + Aitrinity.game.tileSize / 2f - item.rect.width / 2f, item.rect.y  + Aitrinity.game.tileSize / 2f  - item.rect.height / 2f, item.rect.width, item.rect.height);
 			itemsMap.put(showRect, item);
 			batch.draw(region, showRect.x, showRect.y, showRect.width, showRect.height);
 		}
