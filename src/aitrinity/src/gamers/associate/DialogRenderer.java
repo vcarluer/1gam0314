@@ -124,19 +124,12 @@ public class DialogRenderer {
 			} else {
 				DialInfo dial = text.get(idx);
 				boolean say = true;
-				if (dial.text.equals("#cle1")) {
+				if (dial.text.startsWith("#")) {
 					say = false;
-					Aitrinity.game.takeOtherItem("cle1");
-				}
-				
-				if (dial.text.equals("#cle2")) {
-					say = false;
-					Aitrinity.game.takeOtherItem("cle2");
-				}
-				
-				if (dial.text.equals("#cle3")) {
-					say = false;
-					Aitrinity.game.takeOtherItem("cle3");
+					String id = dial.text.substring(1);
+					Aitrinity.game.takeOtherItem(id);
+					Aitrinity.game.setSay(Aitrinity.game.itemInfo.getInfo(id));
+					sayTime = sayLife;
 				}
 				
 				if (say) {
@@ -148,13 +141,18 @@ public class DialogRenderer {
 						renderTextPC(dial.text);
 					}
 				} else {
-					Aitrinity.game.setSay("La partie de la clé du firewall");
+					
 				}
 			}			
 		}
 	}
 	
 	public void skip() {
+		sayTime = sayLife;
+	}
+
+	public void cancel() {
 		text = null;
+		
 	}
 }

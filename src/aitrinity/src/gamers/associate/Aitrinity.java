@@ -95,12 +95,9 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private Vector2 testV;
 	
 	private Ia1 ia1;
-	private String ia1Text;
-	private Rectangle ia1TextRect;
+	private Ia2 ia2;
+	private Ia3 ia3;
 	private Rectangle playerTextRect;
-	
-	private String opt1;
-	private Rectangle opt1Rect;	
 	
 	private Rectangle referenceTalk;
 	
@@ -119,7 +116,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private ItemsRenderer itemsRenderer;
 	private InventoryRenderer inventoryRenderer;
 	private ItemCrafter itemCrafter;
-	private ItemInfo itemInfo;
+	public ItemInfo itemInfo;
 
 	private Item selectedItem;
 
@@ -140,7 +137,6 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		targetV = new Vector2();
 		clickV = new Vector2();
 		player = new Rectangle();
-		ia1TextRect = new Rectangle();
 		playerTextRect = new Rectangle();
 		tempRect = new Rectangle();
 		
@@ -161,7 +157,21 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		ia1 = new Ia1("ia1", rect);
 		npcs.add(ia1);
 		
-		opt1Rect = new Rectangle();
+		Rectangle rect2 = new Rectangle();
+		rect2.x = worldCoord(10);
+		rect2.y = worldCoord(12);
+		rect2.width = 32;
+		rect2.height = 64;
+		ia2 = new Ia2("ia2", rect2);
+		npcs.add(ia2);
+		
+		Rectangle rect3 = new Rectangle();
+		rect3.x = worldCoord(11);
+		rect3.y = worldCoord(12);
+		rect3.width = 32;
+		rect3.height = 64;
+		ia3 = new Ia3("ia3", rect3);
+		npcs.add(ia3);
 		
 		setCamera(new OrthographicCamera(w, h));
 		setCamX((w / 2f) * zoom);
@@ -279,22 +289,25 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		inventoryRenderer = new InventoryRenderer();
 		itemCrafter = new ItemCrafter();
 		itemInfo = new ItemInfo();
-		Item cadre = new Item("cadre", new Rectangle(worldCoord(5), worldCoord(5), 0, 0));
-		mapItems.add(cadre);
+		
 		Item photo = new Item("photo", new Rectangle(worldCoord(7), worldCoord(6), 0, 0));
 		mapItems.add(photo);
-		Item casque = new Item("casque", new Rectangle(worldCoord(9), worldCoord(6), 0, 0));
-		mapItems.add(casque);
+		
 		Item cable = new Item("cable", new Rectangle(worldCoord(11), worldCoord(6), 0, 0));
 		mapItems.add(cable);
-		Item manche = new Item("manche", new Rectangle(worldCoord(13), worldCoord(6), 0, 0));
-		mapItems.add(manche);
+		
 		Item lame = new Item("lame", new Rectangle(worldCoord(15), worldCoord(6), 0, 0));
 		mapItems.add(lame);
 
 		Item porte = new Item("porte", new Rectangle(worldCoord(10), worldCoord(10), 0, 0), false);
 		mapItems.add(porte);		
 		
+		Item casque = new Item("casque", new Rectangle(worldCoord(9), worldCoord(6), 0, 0));
+		otherItems.put(casque.id, casque);
+		Item cadre = new Item("cadre", new Rectangle(worldCoord(5), worldCoord(5), 0, 0));
+		otherItems.put(cadre.id, cadre);
+		Item manche = new Item("manche", new Rectangle(worldCoord(13), worldCoord(6), 0, 0));
+		otherItems.put(manche.id, manche);
 		Item cle1 = new Item("cle1", new Rectangle(0, 0, 0, 0));
 		otherItems.put(cle1.id, cle1);
 		Item cle2 = new Item("cle2", new Rectangle(0, 0, 0, 0));
@@ -376,8 +389,6 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 				player.y = worldCoord(3);
 				referenceTalk = null;
 				sayText = null;
-				opt1 = null;
-				ia1Text = null;				
 			}
 					
 			setCamX(player.x);
@@ -420,6 +431,17 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 				batch.draw(textureIa1, ia1.rect.x, ia1.rect.y);				
 			}
 			
+			if (ia2.rect.y > player.y) {
+				batch.setColor(Color.RED);
+				batch.draw(textureIa1, ia2.rect.x, ia2.rect.y);				
+			}
+			
+			if (ia3.rect.y > player.y) {
+				batch.setColor(Color.BLUE);
+				batch.draw(textureIa1, ia3.rect.x, ia3.rect.y);				
+			}
+			batch.setColor(Color.WHITE);
+			
 			if (!move) {
 				batch.draw(texturePlayer, player.x, player.y);
 			}
@@ -427,6 +449,17 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			if (ia1.rect.y <= player.y) {
 				batch.draw(textureIa1, ia1.rect.x, ia1.rect.y);
 			}
+			
+			if (ia2.rect.y <= player.y) {
+				batch.setColor(Color.RED);
+				batch.draw(textureIa1, ia2.rect.x, ia2.rect.y);				
+			}
+			
+			if (ia3.rect.y <= player.y) {
+				batch.setColor(Color.BLUE);
+				batch.draw(textureIa1, ia3.rect.x, ia3.rect.y);				
+			}
+			batch.setColor(Color.WHITE);
 			
 			batch.end();
 			
@@ -606,8 +639,13 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		if (scene != 1)  {
-			interludeTextIdx++;
-			interludeTextTime = 0;
+			if (button == 0) {
+				interludeTextIdx++;
+				interludeTextTime = 0;
+			} else {
+				scene = 1;
+			}
+			
 			return true;
 		}
 		
@@ -616,14 +654,26 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			if (dialogRenderer.text != null) {
 				dialogRenderer.skip();
 			} else {
-				if (ia1.contains(clickV)) {
+				if (ia1.contains(clickV) && selectedItem == null) {
 					ArrayList<DialInfo> text = ia1.getDialog();
 					dialogRenderer.setText(text);
-					ia1Text = null;
+					return true;
+				}
+				
+				if (ia2.contains(clickV) && selectedItem == null) {
+					ArrayList<DialInfo> text = ia2.getDialog();
+					dialogRenderer.setText(text);
+					return true;
+				}
+				
+				if (ia3.contains(clickV) && selectedItem == null) {
+					ArrayList<DialInfo> text = ia3.getDialog();
+					dialogRenderer.setText(text);
+					return true;
 				}
 
 				Item item = itemsRenderer.selectItem(clickV);
-				if (item != null) {
+				if (item != null && selectedItem == null) {
 					if (item.isPickable()) {
 						inventory.add(item);
 						mapItems.remove(item);
@@ -666,13 +716,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 								}
 							}
 						} else {
-							NPC selectedNpc = null;
-							for (NPC npc : npcs) {
-								if (npc.rect.contains(clickV)) {
-									selectedNpc = npc;
-									break;
-								}
-							}
+							NPC selectedNpc = selectNPC();
 							
 							if (selectedNpc != null) {
 								if (selectedNpc.useItemOn(selectedItem)) {
@@ -688,64 +732,80 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		}
 		
 		if (button == 1) {
-			if (move) {
-				if (currentTL != null) {
-					currentTL.free();
+			if (dialogRenderer.text != null) {
+				dialogRenderer.cancel();
+			} else {
+				if (move) {
+					if (currentTL != null) {
+						currentTL.free();
+					}
+					
+					move = false;				
 				}
 				
-				move = false;				
+				if (!dead) {
+					
+					Vector2 pos = new Vector2(player.x, player.y);
+					targetV.x = clickV.x - texturePlayer.getRegionWidth() / 2f;
+					targetV.y = clickV.y;
+					testV.x = targetV.x;
+					testV.y = targetV.y;
+					float length = testV.sub(pos).len();
+					float time = length / speed + 0.5f;
+					currentTL = Timeline.createSequence()
+						.push(Tween.call(new TweenCallback() {
+							
+							@Override
+							public void onEvent(int type, BaseTween<?> source) {
+								move = true;
+								// sayText = null;
+								if (effects.size() == 0) {
+									PooledEffect effect = pool.obtain();
+									effects.add(effect);
+								}
+							}
+						}))
+						.push(Tween.to(this, 0, time).target(targetV.x, targetV.y))
+						.push(Tween.call(new TweenCallback() {
+							
+							@Override
+							public void onEvent(int type, BaseTween<?> source) {
+								clearEffects();
+								move = false;							
+								String say = "";
+								testV.x = mapCoord(player.x + texturePlayer.getRegionWidth() / 2f);
+								testV.y = mapCoord(player.y);
+								if (passable.contains(testV)) {
+									
+								} else {
+									say = null;
+									dead = true;
+									scene = 3;
+								}
+								
+								// say += String.valueOf(testV.x) + ";" + String.valueOf(testV.y);
+								setSay(say);
+								
+							}
+						}))
+						.start(tweenManager);
+				}
 			}
 			
-			if (!dead) {
-				
-				Vector2 pos = new Vector2(player.x, player.y);
-				targetV.x = clickV.x - texturePlayer.getRegionWidth() / 2f;
-				targetV.y = clickV.y;
-				testV.x = targetV.x;
-				testV.y = targetV.y;
-				float length = testV.sub(pos).len();
-				float time = length / speed + 0.5f;
-				currentTL = Timeline.createSequence()
-					.push(Tween.call(new TweenCallback() {
-						
-						@Override
-						public void onEvent(int type, BaseTween<?> source) {
-							move = true;
-							// sayText = null;
-							if (effects.size() == 0) {
-								PooledEffect effect = pool.obtain();
-								effects.add(effect);
-							}
-						}
-					}))
-					.push(Tween.to(this, 0, time).target(targetV.x, targetV.y))
-					.push(Tween.call(new TweenCallback() {
-						
-						@Override
-						public void onEvent(int type, BaseTween<?> source) {
-							clearEffects();
-							move = false;							
-							String say = "";
-							testV.x = mapCoord(player.x + texturePlayer.getRegionWidth() / 2f);
-							testV.y = mapCoord(player.y);
-							if (passable.contains(testV)) {
-								
-							} else {
-								say = null;
-								dead = true;
-								scene = 3;
-							}
-							
-							// say += String.valueOf(testV.x) + ";" + String.valueOf(testV.y);
-							setSay(say);
-							
-						}
-					}))
-					.start(tweenManager);
-			}
 		}
 		
 		return true;
+	}
+
+	private NPC selectNPC() {
+		NPC selectedNpc = null;
+		for (NPC npc : npcs) {
+			if (npc.rect.contains(clickV)) {
+				selectedNpc = npc;
+				break;
+			}
+		}
+		return selectedNpc;
 	}
 	
 	private void clearEffects() {
@@ -767,7 +827,11 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		
 		Item item = inventoryRenderer.select(screenX, screenY);
 		if (item == null) {
-			item = itemsRenderer.selectItem(clickV);	
+			setClickV(screenX, screenY);
+			item = itemsRenderer.selectItem(clickV);
+			if (item == null) {
+				item = selectNPC();
+			}
 		}
 
 		inventoryRenderer.writeInfo(null, 0, 0);

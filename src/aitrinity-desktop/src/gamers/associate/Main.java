@@ -8,8 +8,8 @@ public class Main {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "aitrinity";
 		cfg.useGL20 = false;
-		cfg.width = 1920;
-		cfg.height = 1080;
+		cfg.width = 1280;
+		cfg.height = 1024;
 		cfg.fullscreen = true;
 		
 		new LwjglApplication(new Aitrinity(), cfg);
