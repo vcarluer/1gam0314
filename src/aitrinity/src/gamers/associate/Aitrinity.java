@@ -73,7 +73,9 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private int fontSize = 12;
 	
 	private BitmapFont fontIntro;
+	private BitmapFont fontTitle;
 	private int fontSizeIntro = 30;
+	private int fontSizeTitle = 60;
 	
 	private float sayLife = 3f;
 	private String sayText;
@@ -123,6 +125,11 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private ArrayList<NPC> npcs;
 	
 	private HashMap<String, Item> otherItems;
+	private float yStart;
+	private float xStart;
+	
+	public Color ia2Tint = new Color(0.9f, 0.3f, 0f, 1f);
+	public Color ia3Tint = new Color(0f, 0.3f, 0.9f, 1f);
 
 	@Override
 	public void create() {
@@ -143,14 +150,16 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 		
-		player.x = worldCoord(8);
-		player.y = worldCoord(12);
+		xStart = worldCoord(25);
+		player.x = xStart;
+		yStart = worldCoord(18);
+		player.y = yStart;
 		player.width = tileSize;
 		player.height = tileSize;
 		
 		
 		Rectangle rect = new Rectangle();
-		rect.x = worldCoord(9);
+		rect.x = worldCoord(5);
 		rect.y = worldCoord(12);
 		rect.width = 32;
 		rect.height = 64;
@@ -158,16 +167,16 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		npcs.add(ia1);
 		
 		Rectangle rect2 = new Rectangle();
-		rect2.x = worldCoord(10);
-		rect2.y = worldCoord(12);
+		rect2.x = worldCoord(49);
+		rect2.y = worldCoord(8);
 		rect2.width = 32;
 		rect2.height = 64;
 		ia2 = new Ia2("ia2", rect2);
 		npcs.add(ia2);
 		
 		Rectangle rect3 = new Rectangle();
-		rect3.x = worldCoord(11);
-		rect3.y = worldCoord(12);
+		rect3.x = worldCoord(14);
+		rect3.y = worldCoord(31);
 		rect3.width = 32;
 		rect3.height = 64;
 		ia3 = new Ia3("ia3", rect3);
@@ -196,6 +205,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		getFont().setColor(Color.BLACK);
 		fontIntro = getFontGenerator().generateFont(fontSizeIntro);
 		fontIntro.setColor(Color.WHITE);
+		fontTitle = getFontGenerator().generateFont(fontSizeTitle);
 		
 		effects = new HashSet<PooledEffect>();
 		ParticleEffect prototype = new ParticleEffect();
@@ -291,16 +301,16 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		itemInfo = new ItemInfo();
 		
 		float itemSize = 16;
-		Item photo = new Item("photo", new Rectangle(worldCoord(7), worldCoord(6), itemSize, itemSize));
+		Item photo = new Item("photo", new Rectangle(worldCoord(47), worldCoord(21), itemSize, itemSize));
 		mapItems.add(photo);
 		
-		Item cable = new Item("cable", new Rectangle(worldCoord(11), worldCoord(6), itemSize, itemSize));
+		Item cable = new Item("cable", new Rectangle(worldCoord(26), worldCoord(7), itemSize, itemSize));
 		mapItems.add(cable);
 		
-		Item lame = new Item("lame", new Rectangle(worldCoord(15), worldCoord(6), itemSize, itemSize));
+		Item lame = new Item("lame", new Rectangle(worldCoord(7), worldCoord(6), itemSize, itemSize));
 		mapItems.add(lame);
 
-		Item porte = new Item("porte", new Rectangle(worldCoord(7), worldCoord(14), itemSize * 2, itemSize * 2), false);
+		Item porte = new Item("porte", new Rectangle(worldCoord(41), worldCoord(34), itemSize * 2, itemSize * 2), false);
 		mapItems.add(porte);		
 		
 		Item casque = new Item("casque", new Rectangle(worldCoord(9), worldCoord(6), 0, 0));
@@ -315,6 +325,10 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		otherItems.put(cle2.id, cle2);
 		Item cle3 = new Item("cle3", new Rectangle(0, 0, 0, 0));
 		otherItems.put(cle3.id, cle3);
+		
+		scene = -1;
+		
+		dead = true;
 	}
 	
 	public void takeOtherItem(String id) {
@@ -358,6 +372,16 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		float delta = Gdx.graphics.getDeltaTime();
 		stateTime += delta;
 		
+		if (scene == -1) {
+			drawInterlude(delta);
+			batch.begin();
+			TextBounds bounds = fontTitle.getBounds("AI TRINITY");
+			fontTitle.draw(batch, "AI TRINITY", - bounds.width / 2f, Gdx.graphics.getHeight() / 4);
+			bounds = fontIntro.getBounds("Press a key");
+			fontIntro.draw(batch, "Press a key", - bounds.width / 2f, - Gdx.graphics.getHeight() / 4);
+			batch.end();
+		}
+		
 		if (scene == 0) {
 			drawInterlude(delta);
 			drawText(delta, sentencesScene1);
@@ -389,12 +413,21 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		}
 		
 		if (scene == 1) {
+			
+			texturePlayer = activateAnimation.getKeyFrame(stateTime, true);
+			
 			if (dead) {
+				
 				dead = false;
-				player.x = worldCoord(3);
-				player.y = worldCoord(3);
+				player.x = worldCoord(-5);
+				player.y = yStart;
 				referenceTalk = null;
 				sayText = null;
+				
+				clickV.x = xStart;
+				clickV.y = yStart;
+				
+				movePlayer();
 			}
 					
 			setCamX(player.x);
@@ -421,7 +454,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			
 			tweenManager.update(delta);
 			
-			texturePlayer = activateAnimation.getKeyFrame(stateTime, true);
+			
 			TextureRegion textureIa1 = ia1Animation.getKeyFrame(stateTime, true);
 			
 			for(PooledEffect effect : effects) {
@@ -438,12 +471,12 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			}
 			
 			if (ia2.rect.y > player.y) {
-				batch.setColor(Color.RED);
+				batch.setColor(ia2Tint);
 				batch.draw(textureIa1, ia2.rect.x, ia2.rect.y);				
 			}
 			
 			if (ia3.rect.y > player.y) {
-				batch.setColor(Color.BLUE);
+				batch.setColor(ia3Tint);
 				batch.draw(textureIa1, ia3.rect.x, ia3.rect.y);				
 			}
 			batch.setColor(Color.WHITE);
@@ -457,12 +490,12 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			}
 			
 			if (ia2.rect.y <= player.y) {
-				batch.setColor(Color.RED);
+				batch.setColor(ia2Tint);
 				batch.draw(textureIa1, ia2.rect.x, ia2.rect.y);				
 			}
 			
 			if (ia3.rect.y <= player.y) {
-				batch.setColor(Color.BLUE);
+				batch.setColor(ia3Tint);
 				batch.draw(textureIa1, ia3.rect.x, ia3.rect.y);				
 			}
 			batch.setColor(Color.WHITE);
@@ -543,11 +576,6 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	
 	private void setSayRect(String text, int idx, TextureRegion texture, float x, float y, Rectangle rect, Rectangle relativeTalk) {
 		TextBounds bounds = getFont().getBounds(text);
-//		if (relativeTalk == null || relativeTalk.x < x) {
-//			rect.x = x + texture.getRegionWidth();
-//		} else {
-//			rect.x = x - bounds.width - padding * 2;
-//		}
 		rect.x = x - bounds.width / 2 +texture.getRegionWidth() / 2f - padding;
 		
 		rect.y = y + texture.getRegionHeight() - idx * (bounds.height + padding * 2);
@@ -617,7 +645,12 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	}
 
 	@Override
-	public boolean keyUp(int keycode) {	
+	public boolean keyUp(int keycode) {
+		if (scene == -1) {
+			scene = 0;
+			return true;
+		}
+		
 		if (keycode == Input.Keys.ESCAPE) scene = 1;
 		return true;
 	}
@@ -644,7 +677,11 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		if (scene != 1)  {
+		if (scene == -1) {
+			scene = 0;
+			return true;
+		}
+		if (scene != 1)  { 
 			if (button == 0) {
 				interludeTextIdx++;
 				interludeTextTime = 0;
@@ -726,7 +763,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 							
 							if (selectedNpc != null) {
 								if (selectedNpc.useItemOn(selectedItem)) {
-									inventory.remove(selectedItem);
+									
 								}
 							}
 						}
@@ -751,56 +788,55 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 				
 				if (!dead) {
 					
-					Vector2 pos = new Vector2(player.x, player.y);
-					targetV.x = clickV.x - texturePlayer.getRegionWidth() / 2f;
-					targetV.y = clickV.y;
-					testV.x = targetV.x;
-					testV.y = targetV.y;
-					float length = testV.sub(pos).len();
-					float time = length / speed + 0.5f;
-					currentTL = Timeline.createSequence()
-						.push(Tween.call(new TweenCallback() {
-							
-							@Override
-							public void onEvent(int type, BaseTween<?> source) {
-								move = true;
-								// sayText = null;
-								if (effects.size() == 0) {
-									PooledEffect effect = pool.obtain();
-									effects.add(effect);
-								}
-							}
-						}))
-						.push(Tween.to(this, 0, time).target(targetV.x, targetV.y))
-						.push(Tween.call(new TweenCallback() {
-							
-							@Override
-							public void onEvent(int type, BaseTween<?> source) {
-								clearEffects();
-								move = false;							
-								String say = "";
-								testV.x = mapCoord(player.x + texturePlayer.getRegionWidth() / 2f);
-								testV.y = mapCoord(player.y);
-								if (passable.contains(testV)) {
-									
-								} else {
-									say = null;
-									dead = true;
-									scene = 3;
-								}
-								
-								// say += String.valueOf(testV.x) + ";" + String.valueOf(testV.y);
-								setSay(say);
-								
-							}
-						}))
-						.start(tweenManager);
+					movePlayer();
 				}
 			}
 			
 		}
 		
 		return true;
+	}
+
+	private void movePlayer() {
+		Vector2 pos = new Vector2(player.x, player.y);
+		targetV.x = clickV.x - texturePlayer.getRegionWidth() / 2f;
+		targetV.y = clickV.y;
+		testV.x = targetV.x;
+		testV.y = targetV.y;
+		float length = testV.sub(pos).len();
+		float time = length / speed + 0.5f;
+		currentTL = Timeline.createSequence()
+			.push(Tween.call(new TweenCallback() {
+				
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					move = true;
+					// sayText = null;
+					if (effects.size() == 0) {
+						PooledEffect effect = pool.obtain();
+						effects.add(effect);
+					}
+				}
+			}))
+			.push(Tween.to(this, 0, time).target(targetV.x, targetV.y))
+			.push(Tween.call(new TweenCallback() {
+				
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					clearEffects();
+					move = false;
+					testV.x = mapCoord(player.x + texturePlayer.getRegionWidth() / 2f);
+					testV.y = mapCoord(player.y);
+					if (passable.contains(testV)) {
+						
+					} else {
+						dead = true;
+						scene = 3;
+					}
+					
+				}
+			}))
+			.start(tweenManager);
 	}
 
 	private NPC selectNPC() {
@@ -917,5 +953,19 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 
 	public TextureAtlas getAtlas() {
 		return atlas;
+	}
+
+	public void removeInventory(String id) {
+		Item item = null;
+		for (Item search : inventory) {
+			if (search.id.equals(id)) {
+				item =search;
+				break;
+			}
+		}
+		
+		if (item != null) {
+			inventory.remove(item);
+		}
 	}
 }

@@ -33,14 +33,15 @@ public class Ia1 extends NPC implements IState {
 		dialog2.add(me("Je te recontacte dès que possible"));
 		dialog2.add(me("En attendant prends déjà cette clé tu l'a bien mérité"));
 		dialog2.add(me("#cle1"));
+		dialog2.add(me("-photoex"));
 	}
 	
 	private DialInfo me(String txt) {
-		return new DialInfo(DialWho.NPC, txt);
+		return new DialInfo("ia1", DialWho.NPC, txt);
 	}
 	
 	private DialInfo him(String txt) {
-		return new DialInfo(DialWho.Player, txt);
+		return new DialInfo("player", DialWho.Player, txt);
 	}
 
 	private ArrayList<String> states;

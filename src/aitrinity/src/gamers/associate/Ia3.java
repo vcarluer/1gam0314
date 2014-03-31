@@ -23,14 +23,15 @@ public class Ia3 extends NPC implements IState {
 		
 		dialog2.add(me("En attendant prends déjà cette clé tu l'a bien mérité"));
 		dialog2.add(me("#cle3"));
+		dialog2.add(me("-coupepapier"));
 	}
 	
 	private DialInfo me(String txt) {
-		return new DialInfo(DialWho.NPC, txt);
+		return new DialInfo("ia3", DialWho.NPC, txt);
 	}
 	
 	private DialInfo him(String txt) {
-		return new DialInfo(DialWho.Player, txt);
+		return new DialInfo("player", DialWho.Player, txt);
 	}
 
 	private ArrayList<String> states;

@@ -129,7 +129,12 @@ public class DialogRenderer {
 					String id = dial.text.substring(1);
 					Aitrinity.game.takeOtherItem(id);
 					Aitrinity.game.setSay(Aitrinity.game.itemInfo.getInfo(id));
-					sayTime = sayLife;
+				}
+				
+				if (dial.text.startsWith("-")) {
+					say = false;
+					String id = dial.text.substring(1);
+					Aitrinity.game.removeInventory(id);
 				}
 				
 				if (say) {
@@ -141,7 +146,7 @@ public class DialogRenderer {
 						renderTextPC(dial.text);
 					}
 				} else {
-					
+					sayTime = sayLife;
 				}
 			}			
 		}
