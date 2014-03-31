@@ -1,7 +1,6 @@
 package gamers.associate;	
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -9,9 +8,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class DialogRenderer {
@@ -19,10 +18,10 @@ public class DialogRenderer {
 	private SpriteBatch batch;
 	private ShapeRenderer shapeRenderer;
 	private BitmapFont font;
-	private int fontSize = 35;	
+	private int fontSize = 25;	
 	int paddingH = 20;
 	int paddingW = 50;
-	int dialogH = 200;
+	int dialogH = 100;
 	private float paddingInH = 5;
 	private float paddingInW = 10;
 	
@@ -31,6 +30,12 @@ public class DialogRenderer {
 	private float sayTime;
 	private int sayIdx;
 	
+	private AtlasRegion playerTexture;
+	private AtlasRegion ia1Texture;
+	
+	private int portraitPadding = 25;
+	private float portraitSize = dialogH - 2 * portraitPadding;
+	
 	public DialogRenderer() {
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		batch = new SpriteBatch();
@@ -38,7 +43,10 @@ public class DialogRenderer {
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setProjectionMatrix(camera.combined);
 		font = Aitrinity.game.getFontGenerator().generateFont(fontSize);
-		font.setColor(Color.WHITE);		
+		font.setColor(Color.WHITE);
+		
+		playerTexture = Aitrinity.game.getAtlas().findRegion("dialplayer");
+		ia1Texture = Aitrinity.game.getAtlas().findRegion("dialia1");
 	}
 	
 	private void renderTextPC(String write) {
@@ -47,7 +55,7 @@ public class DialogRenderer {
 		font.setColor(Color.WHITE);
 		font.setColor(Color.WHITE);
 		font.draw(batch, write, 
-				-Gdx.graphics.getWidth() / 2f + paddingW + paddingInW, 
+				xTextBase + paddingInW, 
 				- Gdx.graphics.getHeight() / 2f + paddingH + dialogH / 2 + bounds.height / 2);
 		batch.end();
 	}
@@ -56,23 +64,38 @@ public class DialogRenderer {
 		batch.begin();		
 		TextBounds bounds = font.getBounds(write);
 		font.setColor(Color.WHITE);
-		font.draw(batch, write, -Gdx.graphics.getWidth() / 2f + paddingW + paddingInW, Gdx.graphics.getHeight() / 2f - paddingH - dialogH / 2f + bounds.height / 2f);
+		font.draw(batch, write, xTextBase + paddingInW, Gdx.graphics.getHeight() / 2f - paddingH - dialogH / 2f + bounds.height / 2f);
 		batch.end();
 	}
 	
 	private void renderBackNPC() {
 		shapeRenderer.setColor(Color.GREEN);
 		shapeRenderer.begin(ShapeType.Filled);
-		
-		shapeRenderer.rect(-Gdx.graphics.getWidth() / 2f + paddingW  , Gdx.graphics.getHeight() / 2f - paddingH - dialogH, Gdx.graphics.getWidth() - 2 * paddingW, dialogH);
+		float xBase = -Gdx.graphics.getWidth() / 2f + paddingW;
+		float yBase = Gdx.graphics.getHeight() / 2f - paddingH - dialogH;
+		shapeRenderer.rect(xBase, yBase, Gdx.graphics.getWidth() - 2 * paddingW, dialogH);
 		shapeRenderer.end();
+		
+		xTextBase = xBase + portraitPadding + portraitSize;
+		batch.begin();		
+		batch.draw(ia1Texture, xBase + portraitPadding, yBase + portraitPadding, portraitSize, portraitSize);
+		batch.end();
 	}
+	
+	private float xTextBase;
 	
 	private void renderBackPC() {
 		shapeRenderer.setColor(Color.GREEN);
 		shapeRenderer.begin(ShapeType.Filled);
-		shapeRenderer.rect(-Gdx.graphics.getWidth() / 2f + paddingW  , - Gdx.graphics.getHeight() / 2f + paddingH, Gdx.graphics.getWidth() - 2 * paddingW, dialogH);
+		float xBase = -Gdx.graphics.getWidth() / 2f + paddingW;
+		float yBase = - Gdx.graphics.getHeight() / 2f + paddingH;
+		shapeRenderer.rect(xBase, yBase, Gdx.graphics.getWidth() - 2 * paddingW, dialogH);
 		shapeRenderer.end();
+		
+		xTextBase = xBase + portraitPadding + portraitSize;
+		batch.begin();		
+		batch.draw(playerTexture, xBase + portraitPadding, yBase + portraitPadding, portraitSize, portraitSize);
+		batch.end();
 	}
 	
 	
@@ -84,10 +107,10 @@ public class DialogRenderer {
 	}
 	
 	private DialWho who;
-	public ArrayList<String> text;
+	public ArrayList<DialInfo> text;
 	private int idx;
 	
-	public void setText(DialWho who, ArrayList<String> text) {
+	public void setText(ArrayList<DialInfo> text) {
 		this.who = who;
 		this.text = text;
 		idx = 0;
@@ -105,12 +128,13 @@ public class DialogRenderer {
 			if (idx >= text.size()) {
 				text = null;
 			} else {
-				if (this.who == DialWho.NPC) {
+				DialInfo dial = text.get(idx);
+				if (dial.who == DialWho.NPC) {
 					renderBackNPC();
-					renderTextNPC(text.get(idx));
+					renderTextNPC(dial.text);
 				} else {
 					renderBackPC();
-					renderTextPC(text.get(idx));
+					renderTextPC(dial.text);
 				}
 			}			
 		}

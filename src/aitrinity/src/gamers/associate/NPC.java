@@ -12,6 +12,4 @@ public class NPC extends Item {
 	public boolean contains(Vector2 vector) {
 		return rect.contains(vector);
 	}
-
-	public String say;
 }

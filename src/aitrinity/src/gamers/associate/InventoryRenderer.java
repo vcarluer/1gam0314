@@ -7,6 +7,8 @@ import java.util.Map.Entry;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -18,6 +20,9 @@ public class InventoryRenderer {
 	private SpriteBatch batch;
 	private ShapeRenderer shapeRenderer;
 	private HashMap<Rectangle, Item> items;
+	private BitmapFont font;
+	private Rectangle textInfo;
+	private Vector2 vectmp;
 
 	public InventoryRenderer() {
 		batch = new SpriteBatch();
@@ -26,6 +31,9 @@ public class InventoryRenderer {
 		OrthographicCamera camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		batch.setProjectionMatrix(camera.combined);	
 		shapeRenderer.setProjectionMatrix(camera.combined);
+		font = Aitrinity.game.fontGenerator.generateFont(26);
+		textInfo = new Rectangle();
+		vectmp = new Vector2();
 	}
 
 	public void render(ArrayList<Item> inventory) {
@@ -61,6 +69,17 @@ public class InventoryRenderer {
 		batch.draw(region, vect.x - size / 2f, vect.y - size / 2f, 0, 0, size, size, 1, 1, -30);
 		batch.end();
 	}
+	
+	public void renderInfo() {
+		if (info !=null) {
+			TextBounds bounds = font.getBounds(info);
+			textInfo.x = infoX;
+			textInfo.y = infoY;
+			textInfo.width = bounds.width;
+			textInfo.height = bounds.height;
+			Aitrinity.game.drawText(info, textInfo, shapeRenderer, font, batch);
+		}
+	}
 
 	public Item select(int screenX, int screenY) {
 		Item selectedItem = null;
@@ -76,9 +95,19 @@ public class InventoryRenderer {
 	}
 
 	private Vector2 getCamCorrection(int screenX, int screenY) {
-		Vector2 clickV = new Vector2();
-		clickV.x = (screenX - Gdx.graphics.getWidth() / 2);
-		clickV.y = (Gdx.graphics.getHeight() / 2f - screenY);
-		return clickV;
+		vectmp.x = (screenX - Gdx.graphics.getWidth() / 2);
+		vectmp.y = (Gdx.graphics.getHeight() / 2f - screenY);
+		return vectmp;
+	}
+
+	private String info;
+	private float infoX;
+	private float infoY;
+	
+	public void writeInfo(String info, int screenX, int screenY) {
+		this.info = info;
+		Vector2 vect = getCamCorrection(screenX, screenY);
+		infoX = vect.x;
+		infoY = vect.y;
 	}
 }

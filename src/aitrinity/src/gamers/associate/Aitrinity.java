@@ -54,7 +54,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private TextureAtlas atlas;
 	private BitmapFont font;
 	
-	private FreeTypeFontGenerator fontGenerator;
+	public FreeTypeFontGenerator fontGenerator;
 	
 	private ParticleEffectPool pool;
 	private HashSet<PooledEffect> effects;
@@ -69,10 +69,10 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private float zoom = 0.5f;
 	
 	private boolean move;
-	private int fontSize = 10;
+	private int fontSize = 12;
 	
 	private BitmapFont fontIntro;
-	private int fontSizeIntro = 40;
+	private int fontSizeIntro = 30;
 	
 	private float sayLife = 3f;
 	private String sayText;
@@ -99,8 +99,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private Rectangle playerTextRect;
 	
 	private String opt1;
-	private Rectangle opt1Rect;
-	private boolean opt1Over;
+	private Rectangle opt1Rect;	
 	
 	private Rectangle referenceTalk;
 	
@@ -400,7 +399,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			}
 			
 			if (ia1.rect.y > player.y) {
-				batch.draw(textureIa1, ia1.rect.x, ia1.rect.y);
+				batch.draw(textureIa1, ia1.rect.x, ia1.rect.y);				
 			}
 			
 			if (!move) {
@@ -429,6 +428,8 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			if (selectedItem != null) {
 				inventoryRenderer.renderItem(selectedItem, Gdx.input.getX(), Gdx.input.getY());
 			}
+			
+			inventoryRenderer.renderInfo();
 
 			dialogRenderer.render(delta);
 		}
@@ -504,36 +505,32 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private void say(String text, Rectangle rect, boolean focus) {
 		shapeRenderer.setProjectionMatrix(getCamera().combined);
 		
-		shapeRenderer.begin(ShapeType.Filled);
-		
-		shapeRenderer.setColor(Color.GREEN);
-		tempRect.x = rect.x - padding;
-		tempRect.y = rect.y-padding;
-		tempRect.width = rect.width + padding * 2;
-		tempRect.height = rect.height + padding * 2;
-		shapeRenderer.rect(tempRect.x, tempRect.y, tempRect.width, tempRect.height);
-		if (opt1Over && focus) {
-			shapeRenderer.setColor(new Color(0.8f, 1f, 0, 1f));
-		} else {
-			shapeRenderer.setColor(new Color(0.4f, 1f, 0, 1f));
-		}
-		
-		shapeRenderer.rect(rect.x - paddingIn, rect.y-paddingIn, rect.width + paddingIn * 2, rect.height + paddingIn * 2);
-		shapeRenderer.end();
-		if (opt1Over && focus) {
-			getFont().setColor(new Color(0.06f, 0.3f, 0.5f, 1));
-		} else {
-			getFont().setColor(new Color(0.06f, 0.3f, 0, 1));
-		}
-		
-		batch.begin();
-		getFont().draw(batch, text, rect.x, rect.y + rect.height);
-		batch.end();
+		drawText(text, rect, shapeRenderer, font, batch);
 		
 		rect.x = tempRect.x;
 		rect.y = tempRect.y;
 		rect.width = tempRect.width;
 		rect.height = tempRect.height;
+	}
+
+	public void drawText(String text, Rectangle rect, ShapeRenderer localShapeRenderer, BitmapFont bitmapFont, SpriteBatch spriteBatch) {
+		localShapeRenderer.begin(ShapeType.Filled);
+		
+		localShapeRenderer.setColor(Color.GREEN);
+		tempRect.x = rect.x - padding;
+		tempRect.y = rect.y-padding;
+		tempRect.width = rect.width + padding * 2;
+		tempRect.height = rect.height + padding * 2;
+		localShapeRenderer.rect(tempRect.x, tempRect.y, tempRect.width, tempRect.height);
+		localShapeRenderer.setColor(new Color(0.4f, 1f, 0, 1f));		
+		
+		localShapeRenderer.rect(rect.x - paddingIn, rect.y-paddingIn, rect.width + paddingIn * 2, rect.height + paddingIn * 2);
+		localShapeRenderer.end();
+		bitmapFont.setColor(new Color(0.06f, 0.3f, 0, 1));		
+		
+		spriteBatch.begin();
+		bitmapFont.draw(spriteBatch, text, rect.x, rect.y + rect.height);
+		spriteBatch.end();
 	}
 	
 	private void setSay(String text) {
@@ -602,8 +599,8 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 				dialogRenderer.skip();
 			} else {
 				if (ia1.contains(clickV)) {
-					ArrayList<String> text = ia1.getDialog();
-					dialogRenderer.setText(DialWho.NPC, text);
+					ArrayList<DialInfo> text = ia1.getDialog();
+					dialogRenderer.setText(text);
 					ia1Text = null;
 				}
 
@@ -755,10 +752,12 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			item = itemsRenderer.selectItem(clickV);	
 		}
 
+		inventoryRenderer.writeInfo(null, 0, 0);
+		
 		if (item != null) {
 			String info = itemInfo.getInfo(item);
 			if (info != null && (sayText == null || !sayText.equals(info))) {
-				setSay(itemInfo.getInfo(item));
+				inventoryRenderer.writeInfo(itemInfo.getInfo(item), screenX, screenY);
 			}
 		}
 		

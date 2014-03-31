@@ -9,7 +9,7 @@ cable
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
-  index: -1
+  index: 0
 cadre
   rotate: false
   xy: 16, 0
@@ -23,112 +23,126 @@ casque
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
-  index: -1
+  index: 0
 casquerv
   rotate: false
   xy: 48, 0
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
-  index: -1
+  index: 0
 cle
   rotate: false
-  xy: 64, 0
+  xy: 160, 0
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
-  index: -1
+  index: 0
 cle1
   rotate: false
-  xy: 64, 0
+  xy: 96, 0
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
-  index: -1
-coupepapier
-  rotate: false
-  xy: 64, 0
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-cle2
-  rotate: false
-  xy: 64, 0
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-cle13
-  rotate: false
-  xy: 64, 0
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-lame
-  rotate: false
-  xy: 64, 0
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-cle3
-  rotate: false
-  xy: 64, 0
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-particle
-  rotate: false
-  xy: 64, 0
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-porte
-  rotate: false
-  xy: 64, 0
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-manche
-  rotate: false
-  xy: 64, 0
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
+  index: 0
 cle12
   rotate: false
   xy: 64, 0
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
-  index: -1
+  index: 0
+cle13
+  rotate: false
+  xy: 80, 0
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 0
+cle2
+  rotate: false
+  xy: 128, 0
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 0
 cle23
   rotate: false
-  xy: 64, 0
+  xy: 112, 0
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 0
+cle3
+  rotate: false
+  xy: 144, 0
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 0
+coupepapier
+  rotate: false
+  xy: 176, 0
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 0
+dialia1
+  rotate: false
+  xy: 192, 0
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 0
+dialplayer
+  rotate: false
+  xy: 208, 0
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 0
+lame
+  rotate: false
+  xy: 224, 0
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 0
+manche
+  rotate: false
+  xy: 240, 0
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 0
+particle
+  rotate: false
+  xy: 256, 0
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 photo
   rotate: false
-  xy: 80, 0
+  xy: 272, 0
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
-  index: -1
+  index: 0
 photoex
   rotate: false
-  xy: 96, 0
+  xy: 288, 0
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
-  index: -1
+  index: 0
+porte
+  rotate: false
+  xy: 304, 0
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 0
 
 pack2.png
 format: RGBA8888
@@ -178,6 +192,25 @@ ia1/activate
   index: 5
 
 pack3.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+ia2/activate
+  rotate: false
+  xy: 0, 0
+  size: 32, 64
+  orig: 32, 64
+  offset: 0, 0
+  index: 0
+ia2/activate
+  rotate: false
+  xy: 32, 0
+  size: 32, 64
+  orig: 32, 64
+  offset: 0, 0
+  index: 1
+
+pack4.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none

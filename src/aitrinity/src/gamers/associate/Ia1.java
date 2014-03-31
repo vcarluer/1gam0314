@@ -6,23 +6,36 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Ia1 extends NPC implements IState {
 	public int state = 0;
-	private ArrayList<String> dialog1;
-	private ArrayList<String> dialog2;	
+	private ArrayList<DialInfo> dialog1;
+	private ArrayList<DialInfo> dialog2;	
 	
 	public Ia1(String itemId, Rectangle itemRect) {
 		super(itemId, itemRect);
 		states = new ArrayList<String>();
 		states.add("new");
 		
-		dialog1 = new ArrayList<String>();
-		dialog2 = new ArrayList<String>();
+		dialog1 = new ArrayList<DialInfo>();
+		dialog2 = new ArrayList<DialInfo>();
 		
-		dialog1.add("Bonjour à toi Neon.");
-		dialog1.add("J'ai crû entendre que tu me cherchais.");
-		dialog1.add("Amène moi une preuve d'amour et je répondrai à tes questions.");
+		dialog1.add(me("Bonjour à toi Neon."));
+		dialog1.add(me("J'ai crû entendre que tu me cherchais."));
+		dialog1.add(me("Amène moi une preuve d'amour et je répondrai à tes questions."));
 		
-		dialog2.add("Je regarde ce que je peux faire");
-		dialog2.add("Je te recontacte dès que possible");
+		dialog2.add(me("C'est exactement ce que je cherchais!"));
+		dialog2.add(him("Vous allez pouvoir m'aider maintenant?"));
+		dialog2.add(him("Revoir sa photo m'a rappeler de bons souvenir"));
+		dialog2.add(him("J'aimerai tellement pouvoir lui parler"));
+		dialog2.add(him("Mais elle s'est uploadé dans la matrice il y a 2 semaines"));
+		dialog2.add(me("Je vais regardr ce que je peux faire"));
+		dialog2.add(me("Je te recontacte dès que possible"));
+	}
+	
+	private DialInfo me(String txt) {
+		return new DialInfo(DialWho.NPC, txt);
+	}
+	
+	private DialInfo him(String txt) {
+		return new DialInfo(DialWho.Player, txt);
 	}
 
 	private ArrayList<String> states;
@@ -53,14 +66,14 @@ public class Ia1 extends NPC implements IState {
 		super.useItemOn(item);
 		if (item.id == "photoex") {
 			state = 1;
-			Aitrinity.game.dialogRenderer.setText(DialWho.NPC, dialog2);
+			Aitrinity.game.dialogRenderer.setText(dialog2);
 			return true;
 		}
 		
 		return false;
 	}
 	
-	public ArrayList<String> getDialog() {
+	public ArrayList<DialInfo> getDialog() {
 		if (state == 0) {
 			return dialog1;
 		}
