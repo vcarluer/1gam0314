@@ -21,4 +21,8 @@ public class Item {
 	public boolean isPickable() {
 		return isPickable;
 	}
+	
+	public boolean useItemOn(Item item) {
+		return false;
+	}
 }

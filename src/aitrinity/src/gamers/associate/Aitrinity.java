@@ -93,7 +93,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private HashSet<Vector2> passable;
 	private Vector2 testV;
 	
-	private Rectangle ia1;
+	private Ia1 ia1;
 	private String ia1Text;
 	private Rectangle ia1TextRect;
 	private Rectangle playerTextRect;
@@ -107,12 +107,10 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private Rectangle tempRect;
 	
 	private int scene;
-	
-	private DialogManager ia1Dial;
-	
+		
 	public static Aitrinity game;
 	
-	private DialogRenderer dialogRenderer;
+	public DialogRenderer dialogRenderer;
 
 	private ArrayList<Item> inventory;
 
@@ -151,11 +149,15 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		player.width = tileSize;
 		player.height = tileSize;
 		
-		ia1 = new Rectangle();
-		ia1.x = worldCoord(9);
-		ia1.y = worldCoord(12);
-		ia1.width = 32;
-		ia1.height = 64;
+		
+		Rectangle rect = new Rectangle();
+		rect.x = worldCoord(9);
+		rect.y = worldCoord(12);
+		rect.width = 32;
+		rect.height = 64;
+		ia1 = new Ia1("ia1", rect);
+		npcs.add(ia1);
+		
 		opt1Rect = new Rectangle();
 		
 		setCamera(new OrthographicCamera(w, h));
@@ -219,11 +221,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 				}
 				
 			}
-		}
-		
-		Ia1 ia1State = new Ia1(); 
-		DialNode ia1DialNode = DialogParser.parse(ia1State);
-		ia1Dial = new DialogManager(ia1DialNode);
+		}	
 		
 		sentencesScene1 = new ArrayList<String>();
 		sentencesScene1.add("I am entering the Matrix");
@@ -362,8 +360,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 				referenceTalk = null;
 				sayText = null;
 				opt1 = null;
-				ia1Text = null;
-				setCurrentDialog(null);
+				ia1Text = null;				
 			}
 					
 			setCamX(player.x);
@@ -402,16 +399,16 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 				}
 			}
 			
-			if (ia1.y > player.y) {
-				batch.draw(textureIa1, ia1.x, ia1.y);
+			if (ia1.rect.y > player.y) {
+				batch.draw(textureIa1, ia1.rect.x, ia1.rect.y);
 			}
 			
 			if (!move) {
 				batch.draw(texturePlayer, player.x, player.y);
 			}
 			
-			if (ia1.y <= player.y) {
-				batch.draw(textureIa1, ia1.x, ia1.y);
+			if (ia1.rect.y <= player.y) {
+				batch.draw(textureIa1, ia1.rect.x, ia1.rect.y);
 			}
 			
 			batch.end();
@@ -425,7 +422,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 				}
 			}
 			
-			if (currentDialog == null) {
+			if (dialogRenderer.text == null) {
 				inventoryRenderer.render(inventory);
 			}
 			
@@ -433,7 +430,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 				inventoryRenderer.renderItem(selectedItem, Gdx.input.getX(), Gdx.input.getY());
 			}
 
-			dialogRenderer.render(currentDialog);
+			dialogRenderer.render(delta);
 		}
 	}
 	
@@ -585,7 +582,6 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	
 	private boolean dead;
 	private Timeline currentTL;
-	private DialogManager currentDialog;
 	
 	private void setClickV(int screenX, int screenY) {
 		clickV.x = (screenX - Gdx.graphics.getWidth() / 2) * zoom + getCamX();
@@ -602,17 +598,13 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		
 		setClickV(screenX, screenY);
 		if (button == 0) {
-			if (currentDialog != null) {
-				dialogRenderer.clickOn(screenX, screenY);
+			if (dialogRenderer.text != null) {
+				dialogRenderer.skip();
 			} else {
 				if (ia1.contains(clickV)) {
-					setCurrentDialog(ia1Dial);
-					getCurrentDialog().startDialog();
+					ArrayList<String> text = ia1.getDialog();
+					dialogRenderer.setText(DialWho.NPC, text);
 					ia1Text = null;
-				}
-				else {
-					sayText = null;
-					setCurrentDialog(null);
 				}
 
 				Item item = itemsRenderer.selectItem(clickV);
@@ -648,13 +640,29 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 					if (selectedItem != null) {
 						Item mapItem = itemsRenderer.selectItem(clickV);
 						if (mapItem != null) {
-							String say = itemCrafter.useOn(selectedItem, mapItem);
-							if (say != null) {
-								setSay(say);
-								mapItems.remove(mapItem);
-								inventory.remove(selectedItem);
-							} else {
-								setSay("I cannot do that");
+							if (!mapItem.useItemOn(selectedItem)) {	
+								String say = itemCrafter.useOn(selectedItem, mapItem);
+								if (say != null) {
+									setSay(say);
+									mapItems.remove(mapItem);
+									inventory.remove(selectedItem);
+								} else {
+									setSay("I cannot do that");
+								}
+							}
+						} else {
+							NPC selectedNpc = null;
+							for (NPC npc : npcs) {
+								if (npc.rect.contains(clickV)) {
+									selectedNpc = npc;
+									break;
+								}
+							}
+							
+							if (selectedNpc != null) {
+								if (selectedNpc.useItemOn(selectedItem)) {
+									inventory.remove(selectedItem);
+								}
 							}
 						}
 					}
@@ -741,20 +749,16 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		dialogRenderer.mouseOn(screenX, screenY);
-		setClickV(screenX, screenY);
 		
-		if (currentDialog == null) {
-			Item item = inventoryRenderer.select(screenX, screenY);
-			if (item == null) {
-				item = itemsRenderer.selectItem(clickV);	
-			}
+		Item item = inventoryRenderer.select(screenX, screenY);
+		if (item == null) {
+			item = itemsRenderer.selectItem(clickV);	
+		}
 
-			if (item != null) {
-				String info = itemInfo.getInfo(item);
-				if (info != null && (sayText == null || !sayText.equals(info))) {
-					setSay(itemInfo.getInfo(item));
-				}
+		if (item != null) {
+			String info = itemInfo.getInfo(item);
+			if (info != null && (sayText == null || !sayText.equals(info))) {
+				setSay(itemInfo.getInfo(item));
 			}
 		}
 		
@@ -778,14 +782,6 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	public void setValues(Aitrinity target, int tweenType, float[] newValues) {
 		target.player.x = newValues[0];
 		target.player.y = newValues[1];
-	}
-
-	public DialogManager getCurrentDialog() {
-		return currentDialog;
-	}
-
-	public void setCurrentDialog(DialogManager currentDialog) {
-		this.currentDialog = currentDialog;
 	}
 
 	public BitmapFont getFont() {
@@ -830,10 +826,6 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 
 	public void setFontGenerator(FreeTypeFontGenerator fontGenerator) {
 		this.fontGenerator = fontGenerator;
-	}
-
-	public void dialogEnd() {
-		currentDialog = null;
 	}
 
 	public TextureAtlas getAtlas() {
