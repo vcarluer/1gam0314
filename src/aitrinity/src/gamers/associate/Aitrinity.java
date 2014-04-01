@@ -136,7 +136,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	public Sound selectSound;
 	public Sound music;
 	
-	public int lang = 1; // en - 1 = fr
+	public String lang = "en"; // or fr
 
 	@Override
 	public void create() {
@@ -253,75 +253,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			}
 		}	
 		
-		sentencesScene1 = new ArrayList<String>();
-		sentencesScene1.add("I am entering the Matrix");
-		sentencesScene1.add("I hope everything will be ok");
-		sentencesScene1.add("I am searching the trinity AI");
-		sentencesScene1.add("I have a work for them");
-		sentencesScene1.add("I remember my virtual moves");
-		sentencesScene1.add("RIGHT click MOVE my avatar");
-		sentencesScene1.add("... And LEFT click INTERACT with the matrix");
-		sentencesScene1.add("I really need to be careful");
-		sentencesScene1.add("I will lost my avatar if it fails in matrix flow");
-		sentencesScene1.add("Let's go!");
 		
-		sentencesScene3 = new ArrayList<String>();
-		sentencesScene3.add("I disappeared, humm...");
-		sentencesScene3.add("My avatar has lost himself in matrix flow");
-		sentencesScene3.add("I have to go back quickly");
-		sentencesScene3.add("I have to find the trinity AI");
-
-		sentencesSceneF1 = new ArrayList<String>();
-		sentencesSceneF1.add("The first trinity found her");
-		sentencesSceneF1.add("My ex girl firend here in the matrix");
-		sentencesSceneF1.add("She wants to see me");
-		sentencesSceneF1.add("She wants to see the real me");
-		sentencesSceneF1.add("Not my flesh, not my human feeling");
-		sentencesSceneF1.add("I have to reborn in the matrix");
-		sentencesSceneF1.add("To upload my self");
-		sentencesSceneF1.add("And sacrifice my body");
-		sentencesSceneF1.add("This is where I go");
-		sentencesSceneF1.add("I love her");		
-		
-		sentencesSceneF = new ArrayList<String>();
-		sentencesSceneF.add("Only one can be choosen");
-		sentencesSceneF.add("Only work can tell you what she knows");
-		sentencesSceneF.add("Choose the first and you may get your ex back");
-		sentencesSceneF.add("Choose the second and you may get rid of FBI");
-		sentencesSceneF.add("Choose the thirs and you may be rich");
-		sentencesSceneF.add("You can either choose to not choose");
-		sentencesSceneF.add("So now, what is you choice?");
-		sentencesSceneF.add("Love, security or money");
-		
-		sentencesSceneFF = new ArrayList<String>();
-		sentencesSceneFF.add("Love, security or money");
-		
-
-		sentencesSceneF2 = new ArrayList<String>();
-		sentencesSceneF2.add("The second trinity found my fbi case");
-		sentencesSceneF2.add("All the record are deleted");
-		sentencesSceneF2.add("I'm free again now");
-		sentencesSceneF2.add("I'm going to restart my life");
-		sentencesSceneF2.add("Not everybody have a second chance");
-
-		sentencesSceneF3 = new ArrayList<String>();
-		sentencesSceneF3.add("The third trinity have works well");
-		sentencesSceneF3.add("I have a bank account with millions");
-		sentencesSceneF3.add("But now I'm tracked");
-		sentencesSceneF3.add("Just behind me is the FBI");
-		sentencesSceneF3.add("I know they will catch me soon");
-		sentencesSceneF3.add("I've lost my life, i've lost my love");
-		sentencesSceneF3.add("The rest of my life is finished");
-		
-		sentencesSceneF4 = new ArrayList<String>();
-		sentencesSceneF4.add("All the trinity meld together");
-		sentencesSceneF4.add("They are free");
-		sentencesSceneF4.add("They disappear is the matrix");
-		sentencesSceneF4.add("but they have left you some gifts");
-		sentencesSceneF4.add("You have a mail from your ex");
-		sentencesSceneF4.add("The FBI does not seek you anymore");
-		sentencesSceneF4.add("And a lot of moeny is waiting for you");
-		sentencesSceneF4.add("This was a good day");
 		
 		dialogRenderer = new DialogRenderer();
 
@@ -399,7 +331,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private float interludeTextLife = 3.5f;
 	private float interludeTextTime;
 	private int interludeTextIdx = 0;
-	private ArrayList<String> sentencesScene1;
+	private String[] sentencesScene1;
 	private ArrayList<String> sentencesScene3;
 	private ArrayList<String> sentencesSceneF;
 	private ArrayList<String> sentencesSceneFF;
@@ -412,6 +344,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private Rectangle choix1;
 	private Rectangle choix2;
 	private Rectangle choix3;
+	private boolean init;
 	
 	@Override
 	public void render() {		
@@ -429,16 +362,83 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			batch.begin();
 			TextBounds bounds = fontTitle.getBounds("AI TRINITY");
 			fontTitle.draw(batch, "AI TRINITY", - bounds.width / 2f, Gdx.graphics.getHeight() / 4);
-			bounds = fontIntro.getBounds("Press a key");
-			fontIntro.draw(batch, "Press a key", - bounds.width / 2f, - Gdx.graphics.getHeight() / 4);
 			
-			bounds = fontIntro.getBounds("Choose: [E]nglish (poor) - [F]rançais");
-			fontIntro.draw(batch, "Choose: [E]nglish (poor) - [F]rançais", - bounds.width / 2f, - Gdx.graphics.getHeight() / 3);
+			
+			bounds = fontIntro.getBounds("Choose your language:");
+			fontIntro.draw(batch, "Choose your language:", - bounds.width / 2f, bounds.height * 3 - Gdx.graphics.getHeight() / 4);
+			bounds = fontIntro.getBounds("Poor [E]nglish");
+			fontIntro.draw(batch, "Poor [E]nglish", - bounds.width / 2f, 0 - Gdx.graphics.getHeight() / 4);
+			bounds = fontIntro.getBounds("[F]rançais");
+			fontIntro.draw(batch, "[F]rançais", - bounds.width / 2f, 0 - bounds.height * 3 - Gdx.graphics.getHeight() / 4);
 			
 			batch.end();
+			
+			init = false;
 		}
 		
 		if (scene == 0) {
+			if (!init) {
+				sentencesScene1 = TextReader.get("scene0");
+				
+				sentencesScene3 = new ArrayList<String>();
+				sentencesScene3.add("I disappeared, humm...");
+				sentencesScene3.add("My avatar has lost himself in matrix flow");
+				sentencesScene3.add("I have to go back quickly");
+				sentencesScene3.add("I have to find the trinity AI");
+
+				sentencesSceneF1 = new ArrayList<String>();
+				sentencesSceneF1.add("The first trinity found her");
+				sentencesSceneF1.add("My ex girl firend here in the matrix");
+				sentencesSceneF1.add("She wants to see me");
+				sentencesSceneF1.add("She wants to see the real me");
+				sentencesSceneF1.add("Not my flesh, not my human feeling");
+				sentencesSceneF1.add("I have to reborn in the matrix");
+				sentencesSceneF1.add("To upload my self");
+				sentencesSceneF1.add("And sacrifice my body");
+				sentencesSceneF1.add("This is where I go");
+				sentencesSceneF1.add("I love her");		
+				
+				sentencesSceneF = new ArrayList<String>();
+				sentencesSceneF.add("Only one can be choosen");
+				sentencesSceneF.add("Only work can tell you what she knows");
+				sentencesSceneF.add("Choose the first and you may get your ex back");
+				sentencesSceneF.add("Choose the second and you may get rid of FBI");
+				sentencesSceneF.add("Choose the thirs and you may be rich");
+				sentencesSceneF.add("You can either choose to not choose");
+				sentencesSceneF.add("So now, what is you choice?");
+				sentencesSceneF.add("Love, security or money");
+				
+				sentencesSceneFF = new ArrayList<String>();
+				sentencesSceneFF.add("Love, security or money");
+				
+
+				sentencesSceneF2 = new ArrayList<String>();
+				sentencesSceneF2.add("The second trinity found my fbi case");
+				sentencesSceneF2.add("All the record are deleted");
+				sentencesSceneF2.add("I'm free again now");
+				sentencesSceneF2.add("I'm going to restart my life");
+				sentencesSceneF2.add("Not everybody have a second chance");
+
+				sentencesSceneF3 = new ArrayList<String>();
+				sentencesSceneF3.add("The third trinity have works well");
+				sentencesSceneF3.add("I have a bank account with millions");
+				sentencesSceneF3.add("But now I'm tracked");
+				sentencesSceneF3.add("Just behind me is the FBI");
+				sentencesSceneF3.add("I know they will catch me soon");
+				sentencesSceneF3.add("I've lost my life, i've lost my love");
+				sentencesSceneF3.add("The rest of my life is finished");
+				
+				sentencesSceneF4 = new ArrayList<String>();
+				sentencesSceneF4.add("All the trinity meld together");
+				sentencesSceneF4.add("They are free");
+				sentencesSceneF4.add("They disappear is the matrix");
+				sentencesSceneF4.add("but they have left you some gifts");
+				sentencesSceneF4.add("You have a mail from your ex");
+				sentencesSceneF4.add("The FBI does not seek you anymore");
+				sentencesSceneF4.add("And a lot of moeny is waiting for you");
+				sentencesSceneF4.add("This was a good day");
+			}
+			
 			drawInterlude(delta);
 			drawText(delta, sentencesScene1);
 		}
@@ -641,6 +641,52 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		batch.end();
 	}
 	
+	private void drawText(float delta, String[] sentences) {
+		interludeTextTime+=delta;
+		if (interludeTextTime > interludeTextLife) {
+			interludeTextTime = 0;
+			interludeTextIdx++;
+		}
+		
+		if (interludeTextIdx >= sentences.length) {
+			interludeTextIdx = 0;
+			interludeTextTime = 0;
+			
+			if (scene < 4) {
+				scene = 1;
+			} else {
+				if (scene > 4 && scene < 40) {
+					scene = 9;
+				} else {
+					if (scene == 4) {
+						interludeTextIdx = sentences.length - 1;
+					} else {
+						scene = 4;
+					}
+				}
+			}
+
+			return;
+		}
+		
+		String text = sentences[interludeTextIdx];
+		TextBounds bounds = fontIntro.getBounds(text);
+		tempRect.x = - bounds.width / 2f;
+		tempRect.y = -300;
+		tempRect.width = bounds.width;
+		tempRect.height = bounds.height;
+		
+		shapeRenderer.setProjectionMatrix(getCamera().combined);
+		shapeRenderer.begin(ShapeType.Filled);
+		shapeRenderer.setColor(new Color(0.4f, 1f, 0, 1f));
+		int padding = 25;
+		shapeRenderer.rect(-Gdx.graphics.getWidth() / 2f + padding, tempRect.y - padding, Gdx.graphics.getWidth() - padding * 2, tempRect.height + padding * 2);
+		shapeRenderer.end();
+		batch.begin();
+		fontIntro.draw(batch, text, tempRect.x, tempRect.y + tempRect.height);
+		batch.end();
+	}
+	
 	private void drawText(float delta, ArrayList<String> sentences) {
 		interludeTextTime+=delta;
 		if (interludeTextTime > interludeTextLife) {
@@ -736,6 +782,10 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		spriteBatch.end();
 	}
 	
+	public void setSay(GameText text) {
+		setSay(text.get());		
+	}
+	
 	public void setSay(String text) {
 		sayText = text;
 		sayTime = 0;
@@ -766,14 +816,15 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	public boolean keyUp(int keycode) {
 		if (scene == -1) {
 			if (keycode == Input.Keys.E) {
-				lang = 0;
+				lang = "en";
+				scene = 0;
 			}
 			
 			if (keycode == Input.Keys.F) {
-				lang = 1;
+				lang = "fr";
+				scene = 0;
 			}
 			
-			scene = 0;
 			return true;
 		}
 		
@@ -915,10 +966,10 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 							inventory.add(crafted);
 							String info = itemInfo.getInfo(crafted);
 							if (info != null) {
-								setSay("Hey! " + info);
+								setSay(new GameText("Hey! " + info, "Hé !" + info));
 							}
 						} else {
-							setSay("What am I trying to do...");
+							setSay(new GameText("What am I trying to do...", "Qu'est-ce que j'essaie de faire..."));
 						}
 
 						selectedItem = null;
@@ -934,7 +985,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 									mapItems.remove(mapItem);
 									inventory.remove(selectedItem);
 								} else {
-									setSay("I cannot do that");
+									setSay(new GameText("I cannot do that", "Je ne peux pas faire ça"));
 								}
 							}
 						} else {

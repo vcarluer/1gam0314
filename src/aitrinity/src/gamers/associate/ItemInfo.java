@@ -3,38 +3,37 @@ package gamers.associate;
 import java.util.HashMap;
 
 public class ItemInfo {
-	private HashMap<String, String> info;
+	private HashMap<String, GameText> info;
 
 	public ItemInfo() {
-		info = new HashMap<String, String>();
-		info.put("cadre", "A 3 dimensional frame");
-		info.put("photo", "A compressed image of my ex");
-		info.put("casque", "A VR helmet, wire is missing");
-		info.put("cable", "A neural wire cable");
-		info.put("manche", "A wood textured handle");
-		info.put("lame", "A shiny chrome blade");
-		info.put("cle1", "The part of a key");
-		info.put("cle2", "The part of a key");
-		info.put("cle3", "The part of a key");
-		info.put("cle12", "The part of a key");
-		info.put("cle13", "The part of a key");
-		info.put("cle23", "The part of a key");
-		info.put("cle", "The key to open the firewall");
-		info.put("photoex", "The 3d photo of my ex");
-		info.put("casquerv", "A fully working VR helmet");
-		info.put("coupepapier", "A little blade to cut mail");
-		info.put("porte", "The main firewall. I need a key");
-		info.put("ia1", "The first trinity AI");
-		info.put("ia2", "The second trinity AI");
-		info.put("ia3", "The third trinity AI");
-
+		info = new HashMap<String, GameText>();
+		info.put("cadre", new GameText("A 3 dimensional frame", "Un cadre en 3 dimensions"));
+		info.put("photo", new GameText("A compressed image of my ex", "Une image compressée de mon ex"));
+		info.put("casque", new GameText("VR glasses, wire is missing", "Des lunettes de RV, la connexion est manquante"));
+		info.put("cable", new GameText("A neural wire", "Une connexion neuronale"));
+		info.put("manche", new GameText("A wood textured handle", "Un manche texturé en bois"));
+		info.put("lame", new GameText("A shiny chrome blade", "Une lame chromée brillante"));
+		info.put("cle1", new GameText("The part of a key", "La partie d'une clé"));
+		info.put("cle2", new GameText("The part of a key", "La partie d'une clé"));
+		info.put("cle3", new GameText("The part of a key", "La partie d'une clé"));
+		info.put("cle12", new GameText("The part of a key", "La partie d'une clé"));
+		info.put("cle13", new GameText("The part of a key", "La partie d'une clé"));
+		info.put("cle23", new GameText("The part of a key", "La partie d'une clé"));
+		info.put("cle", new GameText("The key to open the firewall", "La clé pour ouvrir le firewall"));
+		info.put("photoex", new GameText("The 3D photo of my ex", "La photo 3D de mon ex"));
+		info.put("casquerv", new GameText("Fully working VR glasses", "Des lunettes RV pleinement fonctionnelles"));
+		info.put("coupepapier", new GameText("A little blade to cut mail", "Une petite lame pour couper le courrier"));
+		info.put("porte", new GameText("The main firewall. I need a key", "Le firewall principal, j'ai besoin d'une clé"));
+		info.put("ia1", new GameText("The first trinity AI", "La première IA trinity"));
+		info.put("ia2", new GameText("The second trinity AI", "La seconde IA trinity"));
+		info.put("ia3", new GameText("The third trinity AI", "La troisième IA trinity"));
 	}
 
 	public String getInfo(Item item) {
-		return info.get(item.id);
+		return info.get(item.id).get();
 	}
 
 	public String getInfo(String id) {
-		return info.get(id);
+		return info.get(id).get();
 	}
 }

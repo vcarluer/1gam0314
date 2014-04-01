@@ -65,7 +65,7 @@ public class Ia3 extends NPC implements IState {
 			Aitrinity.game.dialogRenderer.setText(dialog2);
 			return true;
 		} else {
-			Aitrinity.game.setSay("Ca ne l'interresera pas");
+			Aitrinity.game.setSay(new GameText("She won't be interrested", "Ca ne l'intéressera pas"));
 		}
 		
 		return false;
