@@ -22,7 +22,7 @@ public class ItemInfo {
 		info.put("cle", new GameText("The key to open the firewall", "La clé pour ouvrir le firewall"));
 		info.put("photoex", new GameText("The 3D photo of my ex", "La photo 3D de mon ex"));
 		info.put("casquerv", new GameText("Fully working VR glasses", "Des lunettes RV pleinement fonctionnelles"));
-		info.put("coupepapier", new GameText("A little blade to cut mail", "Une petite lame pour couper le courrier"));
+		info.put("coupepapier", new GameText("A paper cut for mail", "Un coupe papier pour le courrier"));
 		info.put("porte", new GameText("The main firewall. I need a key", "Le firewall principal, j'ai besoin d'une clé"));
 		info.put("ia1", new GameText("The first trinity AI", "La première IA trinity"));
 		info.put("ia2", new GameText("The second trinity AI", "La seconde IA trinity"));
