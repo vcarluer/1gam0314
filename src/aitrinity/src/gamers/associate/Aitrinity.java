@@ -264,7 +264,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		sentencesScene3.add("I have to go back quickly");
 		sentencesScene3.add("I have to find the trinity AI");
 
-		sentencesSceneF1  = new ArrayList<String>();
+		sentencesSceneF1 = new ArrayList<String>();
 		sentencesSceneF1.add("The first trinity found her");
 		sentencesSceneF1.add("My ex girl firend here in the matrix");
 		sentencesSceneF1.add("She wants to see me");
@@ -275,6 +275,20 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		sentencesSceneF1.add("And sacrifice my body");
 		sentencesSceneF1.add("This is where I go");
 		sentencesSceneF1.add("I love her");		
+		
+		sentencesSceneF = new ArrayList<String>();
+		sentencesSceneF.add("Only one can be choosen");
+		sentencesSceneF.add("Only work can tell you what she knows");
+		sentencesSceneF.add("Choose the first and you may get your ex back");
+		sentencesSceneF.add("Choose the second and you may get rid of FBI");
+		sentencesSceneF.add("Choose the thirs and you may be rich");
+		sentencesSceneF.add("You can either choose to not choose");
+		sentencesSceneF.add("So now, what is you choice?");
+		sentencesSceneF.add("Love, security or money");
+		
+		sentencesSceneFF = new ArrayList<String>();
+		sentencesSceneFF.add("Love, security or money");
+		
 
 		sentencesSceneF2 = new ArrayList<String>();
 		sentencesSceneF2.add("The second trinity found my fbi case");
@@ -336,7 +350,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		Item cle3 = new Item("cle3", new Rectangle(0, 0, 0, 0));
 		otherItems.put(cle3.id, cle3);
 		
-		scene = -1;
+		scene = 40;
 		
 		dead = true;
 		float iaSize = 256;
@@ -373,6 +387,8 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private int interludeTextIdx = 0;
 	private ArrayList<String> sentencesScene1;
 	private ArrayList<String> sentencesScene3;
+	private ArrayList<String> sentencesSceneF;
+	private ArrayList<String> sentencesSceneFF;
 	private ArrayList<String> sentencesSceneF1;
 	private ArrayList<String> sentencesSceneF2;
 	private ArrayList<String> sentencesSceneF3;
@@ -414,9 +430,26 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			drawText(delta, sentencesScene3);
 		}
 		
+		if (scene == 40) {
+			drawInterlude(delta, -512, -128);
+			drawText(delta, sentencesSceneF);
+			batch.begin();
+			Rectangle choix = choix1;
+			batch.draw(textureIa1, choix.x, choix.y, choix.width, choix.height);
+			choix = choix2;
+			batch.setColor(ia2Tint);
+			batch.draw(textureIa1, choix.x, choix.y, choix.width, choix.height);
+			choix = choix3;
+			batch.setColor(ia3Tint);
+			batch.draw(textureIa1, choix.x, choix.y, choix.width, choix.height);
+			batch.end();
+
+			batch.setColor(Color.WHITE);
+		}
+		
 		if (scene == 4) {
 			drawInterlude(delta, -512, -128);
-			
+			drawText(delta, sentencesSceneFF);
 			batch.begin();
 			Rectangle choix = choix1;
 			batch.draw(textureIa1, choix.x, choix.y, choix.width, choix.height);
@@ -597,14 +630,23 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		}
 		
 		if (interludeTextIdx >= sentences.size()) {
+			interludeTextIdx = 0;
+			interludeTextTime = 0;
+			
 			if (scene < 4) {
 				scene = 1;
 			} else {
-				scene = 9;
+				if (scene > 4 && scene < 40) {
+					scene = 9;
+				} else {
+					if (scene == 4) {
+						interludeTextIdx = sentences.size() - 1;
+					} else {
+						scene = 4;
+					}
+				}
 			}
-			
-			interludeTextIdx = 0;
-			interludeTextTime = 0;
+
 			return;
 		}
 		
@@ -764,7 +806,11 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 				interludeTextIdx++;
 				interludeTextTime = 0;
 			} else {
-				scene = 9;
+				if (scene < 40) {
+					scene = 9;
+				} else {
+					scene = 4;
+				}
 			}
 			
 			return true;
@@ -773,6 +819,8 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		if (scene == 4) {
 			clickV.x = (screenX - Gdx.graphics.getWidth() / 2);
 			clickV.y = (Gdx.graphics.getHeight() / 2f - screenY);
+			interludeTextTime = 0;
+			interludeTextIdx = 0;
 			
 			if (choix1.contains(clickV)) {
 				scene = 5;

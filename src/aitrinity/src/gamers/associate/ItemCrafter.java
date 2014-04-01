@@ -65,7 +65,7 @@ public class ItemCrafter {
 		String returnSay = null;
 		if (selectedItem.id.equals("cle") && mapItem.id.equals("porte")) {
 			returnSay = "La porte s'est ouverte !";
-			Aitrinity.game.scene = 4;
+			Aitrinity.game.scene = 40;
 		}
 
 		return returnSay;
