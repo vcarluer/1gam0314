@@ -54,7 +54,8 @@ public class ItemCrafter {
 	}
 
 	private Item tryCombine(Item item1, Item item2, String id1, String id2, String idOut) {
-		if ((item1.id.equals(id1) || item1.id.equals(id2)) && (item2.id.equals(id1) || item2.id.equals(id2))) {
+		if (!(item1.id.equals(item2.id)) && (item1.id.equals(id1) || item1.id.equals(id2)) && (item2.id.equals(id1) || item2.id.equals(id2))) {
+			Aitrinity.game.selectSound.play();
 			return new Item(idOut, new Rectangle(0, 0, 0, 0));
 		}
 		
@@ -64,6 +65,8 @@ public class ItemCrafter {
 	public String useOn(Item selectedItem, Item mapItem) {
 		String returnSay = null;
 		if (selectedItem.id.equals("cle") && mapItem.id.equals("porte")) {
+			Aitrinity.game.music.loop();
+			Aitrinity.game.selectSound.play();
 			returnSay = "La porte s'est ouverte !";
 			Aitrinity.game.scene = 40;
 		}

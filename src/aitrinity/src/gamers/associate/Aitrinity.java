@@ -15,6 +15,7 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -130,6 +131,10 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	
 	public Color ia2Tint = new Color(0.9f, 0.3f, 0f, 1f);
 	public Color ia3Tint = new Color(0f, 0.3f, 0.9f, 1f);
+	
+	private Sound moveSound;
+	public Sound selectSound;
+	public Sound music;
 
 	@Override
 	public void create() {
@@ -350,13 +355,20 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		Item cle3 = new Item("cle3", new Rectangle(0, 0, 0, 0));
 		otherItems.put(cle3.id, cle3);
 		
-		scene = 40;
+		
 		
 		dead = true;
 		float iaSize = 256;
 		choix1 = new Rectangle(- iaSize / 4f, - iaSize / 2f, iaSize / 2f, iaSize);
 		choix2 = new Rectangle(iaSize - iaSize / 4f, - iaSize / 2f, iaSize / 2f, iaSize);
 		choix3 = new Rectangle(iaSize * 2 - iaSize / 4f, - iaSize / 2f, iaSize / 2f, iaSize);
+		
+		moveSound = Gdx.audio.newSound(Gdx.files.internal("data/move.wav"));
+		selectSound = Gdx.audio.newSound(Gdx.files.internal("data/select.wav"));
+		music = Gdx.audio.newSound(Gdx.files.internal("data/music.mp3"));
+		
+		scene = -1;
+		music.loop();
 	}
 	
 	public void takeOtherItem(String id) {
@@ -498,7 +510,8 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			texturePlayer = activateAnimation.getKeyFrame(stateTime, true);
 			
 			if (dead) {
-				
+				music.stop();
+				moveSound.play(0.3f);
 				dead = false;
 				player.x = worldCoord(-5);
 				player.y = yStart;
@@ -871,6 +884,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 					if (item.isPickable()) {
 						inventory.add(item);
 						mapItems.remove(item);
+						Aitrinity.game.selectSound.play();
 					}
 				}
 
@@ -949,6 +963,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	}
 
 	private void movePlayer() {
+		moveSound.play(0.02f);
 		Vector2 pos = new Vector2(player.x, player.y);
 		targetV.x = clickV.x - texturePlayer.getRegionWidth() / 2f;
 		targetV.y = clickV.y;
@@ -983,6 +998,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 					} else {
 						dead = true;
 						scene = 3;
+						music.loop();
 					}
 					
 				}
