@@ -25,7 +25,7 @@ public class Ia1 extends NPC implements IState {
 		dialog1.add(me("Amène-moi une preuve d'amour véritable dans ce cadre 3D", "Bring me proof of true love in this 3D frame"));
 	       	dialog1.add(me("Alors je répondrai à tes questions", "Then I will answer your questions"));
 		dialog1.add(me("Je veux que tu me montres ce qui est important pour toi", "I want you to show me what is important to you"));
-		dialog1.add(me("#cadre"));
+		dialog1.add(me("#cadre", "#cadre"));
 		
 		dialog2.add(me("C'est exactement ce que je cherchais !", "This is exactly what I was looking for!"));
 		dialog2.add(him("Vous allez pouvoir m'aider maintenant ?", "You can help me now?"));
@@ -37,8 +37,8 @@ public class Ia1 extends NPC implements IState {
 		dialog2.add(me("Je te recontacte bientôt", "I will soon recontact you"));
 		dialog2.add(me("En attendant prends déjà cette clé tu l'a bien mérité", "In the meantime take this key has deserved"));
 		dialog2.add(me("Elle te permettra d'accéder au firewall qui renferme ce que tu cherches", "It will allow you to access the firewall that contains what you seek"));
-		dialog2.add(me("#cle1"));
-		dialog2.add(me("-photoex"));
+		dialog2.add(me("#cle1", "#cle1"));
+		dialog2.add(me("-photoex", "-photoex"));
 	}
 	
 	private DialInfo me(String txtEn, String txtFr) {
