@@ -41,12 +41,12 @@ public class Ia1 extends NPC implements IState {
 		dialog2.add(me("-photoex", "-photoex"));
 	}
 	
-	private DialInfo me(String txtEn, String txtFr) {
-		return new DialInfo("ia1", DialWho.NPC, txtEn, txtFr);
+	private DialInfo me(String txtFr, String txtEn) {
+		return new DialInfo("ia1", DialWho.NPC, txtFr, txtEn);
 	}
 	
-	private DialInfo him(String txtEn, String txtFr) {
-		return new DialInfo("player", DialWho.Player, txtEn, txtFr);
+	private DialInfo him(String txtFr, String txtEn) {
+		return new DialInfo("player", DialWho.Player, txtFr, txtEn);
 	}
 
 	private ArrayList<String> states;
@@ -81,7 +81,7 @@ public class Ia1 extends NPC implements IState {
 			Aitrinity.game.dialogRenderer.setText(dialog2);
 			return true;
 		} else {
-			Aitrinity.game.setSay(new GameText("She won't be interrested", "Ca ne l'intéressera pas"));
+			Aitrinity.game.setSay(new GameText("Ca ne l'intéressera pas", "She won't be interrested"));
 		}
 		
 		return false;

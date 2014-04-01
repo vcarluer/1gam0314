@@ -78,7 +78,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private int fontSizeIntro = 30;
 	private int fontSizeTitle = 60;
 	
-	private float sayLife = 3f;
+	private float sayLife = 2f;
 	private String sayText;
 	private float sayTime;
 	
@@ -131,7 +131,8 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	
 	public Color ia2Tint = new Color(0.9f, 0.3f, 0f, 1f);
 	public Color ia3Tint = new Color(0f, 0.3f, 0.9f, 1f);
-	public Color iaMeldTint = new Color(0.9f, 0.3f, 0.9f, 1f);
+	// public Color iaMeldTint = new Color(0.5f, 0.1f, 0.5f, 0.5f);
+	private int iaMeld;
 	
 	private Sound moveSound;
 	public Sound selectSound;
@@ -175,16 +176,16 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		npcs.add(ia1);
 		
 		Rectangle rect2 = new Rectangle();
-		rect2.x = worldCoord(49);
-		rect2.y = worldCoord(8);
+		rect2.x = worldCoord(14);
+		rect2.y = worldCoord(31);
 		rect2.width = 32;
 		rect2.height = 64;
 		ia2 = new Ia2("ia2", rect2);
 		npcs.add(ia2);
 		
 		Rectangle rect3 = new Rectangle();
-		rect3.x = worldCoord(14);
-		rect3.y = worldCoord(31);
+		rect3.x = worldCoord(49);
+		rect3.y = worldCoord(8);		
 		rect3.width = 32;
 		rect3.height = 64;
 		ia3 = new Ia3("ia3", rect3);
@@ -302,7 +303,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		selectSound = Gdx.audio.newSound(Gdx.files.internal("data/select.wav"));
 		music = Gdx.audio.newSound(Gdx.files.internal("data/music.mp3"));
 		
-		scene = -1;
+		scene = -1;		
 		music.loop();
 	}
 	
@@ -379,16 +380,8 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		
 		if (scene == 0) {
 			if (!init) {
-				sentencesScene1 = TextReader.get("scene0");				
-				sentencesScene3 = TextReader.get("scene3");				
-				sentencesSceneF1 = TextReader.get("sceneF1");				
-				sentencesSceneF = TextReader.get("sceneF");				
-				sentencesSceneFF = TextReader.get("SceneFF");
-				
-				sentencesSceneF2 = TextReader.get("SceneF2");
-				sentencesSceneF3 = TextReader.get("SceneF3");
-								
-				sentencesSceneF4 = TextReader.get("SceneF4");
+				initSentences();
+				init = true;
 			}
 			
 			drawInterlude(delta);
@@ -439,6 +432,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			batch.begin();
 			Rectangle choix = choix1;
 			batch.draw(textureIa1, choix.x, choix.y, choix.width, choix.height);
+			batch.setColor(Color.WHITE);
 			batch.end();
 			drawText(delta, sentencesSceneF1);
 		}
@@ -449,6 +443,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			Rectangle choix = choix2;
 			batch.setColor(ia2Tint);
 			batch.draw(textureIa1, choix.x, choix.y, choix.width, choix.height);
+			batch.setColor(Color.WHITE);
 			batch.end();
 			
 			drawText(delta, sentencesSceneF2);
@@ -460,6 +455,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			Rectangle choix = choix3;
 			batch.setColor(ia3Tint);
 			batch.draw(textureIa1, choix.x, choix.y, choix.width, choix.height);
+			batch.setColor(Color.WHITE);
 			batch.end();
 			drawText(delta, sentencesSceneF3);
 		}
@@ -468,8 +464,23 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			drawInterlude(delta, -512, -128);
 			batch.begin();			
 			Rectangle choix = choix2;
-			batch.setColor(iaMeldTint);
+			if (iaMeld == 0) {
+				batch.setColor(Color.WHITE);
+				iaMeld++;
+			} else {
+				if (iaMeld == 1) {
+					batch.setColor(ia2Tint);
+					iaMeld++;
+				} else {
+					if (iaMeld == 2) {
+						batch.setColor(ia3Tint);
+						iaMeld = 0;
+					}
+				}								
+			}
+			
 			batch.draw(textureIa1, choix.x, choix.y, choix.width, choix.height);
+			batch.setColor(Color.WHITE);
 			batch.end();
 			drawText(delta, sentencesSceneF4);
 		}
@@ -596,6 +607,19 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			dialogRenderer.render(delta);
 		}
 	}
+
+	private void initSentences() {
+		sentencesScene1 = TextReader.get("scene0");				
+		sentencesScene3 = TextReader.get("scene3");				
+		sentencesSceneF1 = TextReader.get("sceneF1");				
+		sentencesSceneF = TextReader.get("sceneF");				
+		sentencesSceneFF = TextReader.get("SceneFF");
+		
+		sentencesSceneF2 = TextReader.get("SceneF2");
+		sentencesSceneF3 = TextReader.get("SceneF3");
+						
+		sentencesSceneF4 = TextReader.get("SceneF4");
+	}
 	
 	private void drawInterlude(float delta) {
 		drawInterlude(delta, -128, -128);
@@ -626,19 +650,20 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			
 			if (scene < 4) {
 				scene = 1;
+				return;
 			} else {
 				if (scene > 4 && scene < 40) {
 					scene = 9;
+					return;
 				} else {
 					if (scene == 4) {
 						interludeTextIdx = sentences.length - 1;
 					} else {
 						scene = 4;
+						return;
 					}
 				}
-			}
-
-			return;
+			}			
 		}
 		
 		String text = sentences[interludeTextIdx];
@@ -938,10 +963,10 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 							inventory.add(crafted);
 							String info = itemInfo.getInfo(crafted);
 							if (info != null) {
-								setSay(new GameText("Hey! " + info, "Hé !" + info));
+								setSay(new GameText("Hé !" + info, "Hey! " + info));
 							}
 						} else {
-							setSay(new GameText("What am I trying to do...", "Qu'est-ce que j'essaie de faire..."));
+							setSay(new GameText("Qu'est-ce que j'essaie de faire...", "What am I trying to do..."));
 						}
 
 						selectedItem = null;
@@ -957,7 +982,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 									mapItems.remove(mapItem);
 									inventory.remove(selectedItem);
 								} else {
-									setSay(new GameText("I cannot do that", "Je ne peux pas faire ça"));
+									setSay(new GameText("Je ne peux pas faire ça", "I cannot do that"));
 								}
 							}
 						} else {

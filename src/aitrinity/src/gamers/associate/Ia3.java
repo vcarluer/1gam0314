@@ -17,7 +17,7 @@ public class Ia3 extends NPC implements IState {
 		dialog1 = new ArrayList<DialInfo>();
 		dialog2 = new ArrayList<DialInfo>();
 
-		dialog1.add(me("Je suis contente que tu m¿aies trouvé", "I'm glad you found me"));
+		dialog1.add(me("Je suis contente que tu m'aies trouvé", "I'm glad you found me"));
 		dialog1.add(me("Je me présente, je suis la troisième trinity", "Let me introduce myself, I am the third trinity"));
 		dialog1.add(me("Ce que je préfère ce sont les jeux !", "What I like are games!"));
 		dialog1.add(me("Alors avant de répondre à tes questions", "So before I answer your questions"));
@@ -78,7 +78,7 @@ public class Ia3 extends NPC implements IState {
 			Aitrinity.game.dialogRenderer.setText(dialog2);
 			return true;
 		} else {
-			Aitrinity.game.setSay(new GameText("She won't be interrested", "Ca ne l'intéressera pas"));
+			Aitrinity.game.setSay(new GameText("Ca ne l'intéressera pas", "She won't be interrested"));
 		}
 		
 		return false;

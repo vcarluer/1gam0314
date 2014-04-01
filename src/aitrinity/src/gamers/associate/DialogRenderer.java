@@ -26,7 +26,7 @@ public class DialogRenderer {
 	private float paddingInW = 10;
 	
 	private boolean optRectInit;
-	private float sayLife = 3f;
+	private float sayLife = 2f;
 	private float sayTime;
 	private int sayIdx;
 	

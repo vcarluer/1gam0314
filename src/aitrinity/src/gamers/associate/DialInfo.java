@@ -5,9 +5,9 @@ public class DialInfo {
 	public GameText text;
 	public String talkerId;
 	
-	public DialInfo(String id, DialWho who, String txtEn, String txtFr) {
+	public DialInfo(String id, DialWho who, String txtFr, String txtEn) {
 		this.who = who;
-		text = new GameText(txtEn, txtFr);
+		text = new GameText(txtFr, txtEn);
 		talkerId = id;
 	}
 }

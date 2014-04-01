@@ -4,9 +4,9 @@ public class GameText {
 	public String english;
 	public String french;
 	
-	public GameText(String e, String f) {
-		english = e;
+	public GameText(String f, String e) {
 		french = f;
+		english = e;		
 	}
 	
 	public String get() {

@@ -18,18 +18,18 @@ public class Ia2 extends NPC implements IState {
 		dialog2 = new ArrayList<DialInfo>();
 		
 		dialog1.add(me("Bonjour à toi Neon", "Hello to you Neon"));
-		dialog1.add(me("Tu m¿as trouvé c¿est bien", "Congratulation, you have found me"));
+		dialog1.add(me("Tu m'as trouvé c'est bien", "Congratulation, you have found me"));
 		dialog1.add(me("Je suis la seconde trinity", "I am the second trinity"));
 		dialog1.add(me("Avant de pouvoir t'aider", "Before I can help you"));
-		dialog1.add(me("J¿aimerai que tu fasses quelque chose pour moi", "I'd like you to do something for me"));
+		dialog1.add(me("J'aimerai que tu fasses quelque chose pour moi", "I'd like you to do something for me"));
 		dialog1.add(me("Répare-moi ces lunettes de RV matricielle", "Repairs me these VR matrix glasses"));
-		dialog1.add(me("En tant qu¿IA ces lunettes me montrent la réalité", "As an AI these glasses show me the reality"));
+		dialog1.add(me("En tant qu'IA ces lunettes me montrent la réalité", "As an AI these glasses show me the reality"));
 		dialog1.add(me("Alors je répondrai à tes questions", "Then I will answer your questions"));
 		dialog1.add(me("#casque", "#casque" ));
 
-		dialog2.add(me("Elles ont l¿air parfaitement réparée", "They look in perfectly repaired"));
-		dialog2.add(me("Comment souhaiterais-tu que je t¿aide ?", "How would you like me to help you?"));
-		dialog2.add(him("Et bien j¿ai découvert une mauvaise nouvelle il y a peu", "Well I found out bad news few days ago"));
+		dialog2.add(me("Elles ont l'air parfaitement réparée", "They look in perfectly repaired"));
+		dialog2.add(me("Comment souhaiterais-tu que je t'aide ?", "How would you like me to help you?"));
+		dialog2.add(him("Et bien j'ai découvert une mauvaise nouvelle il y a peu", "Well I found out bad news few days ago"));
 		dialog2.add(him("Le FBI semblerait être sur mes traces", "The FBI seems to be in my footsteps"));
 		dialog2.add(him("Mais je ne suis sûr de rien, pourrais-tu vérifier ?", "But I'm not sure of anything, can you check?"));
 		dialog2.add(me("Je peux même faire plus que cela", "I can even do more than that"));
@@ -79,7 +79,7 @@ public class Ia2 extends NPC implements IState {
 			Aitrinity.game.dialogRenderer.setText(dialog2);
 			return true;
 		} else {
-			Aitrinity.game.setSay(new GameText("She won't be interrested", "Ca ne l'intéressera pas"));
+			Aitrinity.game.setSay(new GameText("Ca ne l'intéressera pas", "She won't be interrested"));
 		}
 		
 		return false;
