@@ -17,21 +17,26 @@ public class Ia1 extends NPC implements IState {
 		dialog1 = new ArrayList<DialInfo>();
 		dialog2 = new ArrayList<DialInfo>();
 		
-		dialog1.add(me("Bonjour à toi Neon."));
-		dialog1.add(me("J'ai crû entendre que tu me cherchais."));
-		dialog1.add(me("Amène moi une preuve d'amour et je répondrai à tes questions."));
-		dialog1.add(me("J'ai un cadre en 3d vide"));
-		dialog1.add(me("Je veux que tu me montres ce qui est important pour toi"));
+		dialog1.add(me("Bonjour à toi Neon", "Hello to you Neon"));
+		dialog1.add(me("J'ai cru entendre que tu me cherchais", "I've heard you were looking for me"));
+		dialog1.add(me("Je suis la première trinity", "I am the first trinity"));
+		dialog1.add(me("Avant de pouvoir t'aider", "Before I can help you"));
+	       	dialog1.add(me("J'aimerai que tu fasses quelque chose pour moi", "I'd like you to do something for me"));
+		dialog1.add(me("Amène-moi une preuve d'amour véritable dans ce cadre 3D", "Bring me proof of true love in this 3D frame"));
+	       	dialog1.add(me("Alors je répondrai à tes questions", "Then I will answer your questions"));
+		dialog1.add(me("Je veux que tu me montres ce qui est important pour toi", "I want you to show me what is important to you"));
 		dialog1.add(me("#cadre"));
 		
-		dialog2.add(me("C'est exactement ce que je cherchais!"));
-		dialog2.add(him("Vous allez pouvoir m'aider maintenant?"));
-		dialog2.add(him("Revoir sa photo m'a rappeler de bons souvenir"));
-		dialog2.add(him("J'aimerai tellement pouvoir lui parler"));
-		dialog2.add(him("Mais elle s'est uploadé dans la matrice il y a 2 semaines"));
-		dialog2.add(me("Je vais regardr ce que je peux faire"));
-		dialog2.add(me("Je te recontacte dès que possible"));
-		dialog2.add(me("En attendant prends déjà cette clé tu l'a bien mérité"));
+		dialog2.add(me("C'est exactement ce que je cherchais !", "This is exactly what I was looking for!"));
+		dialog2.add(him("Vous allez pouvoir m'aider maintenant ?", "You can help me now?"));
+		dialog2.add(him("Revoir sa photo m'a rappelé de bons souvenir", "Seeing her picture reminded me good memories"));
+		dialog2.add(him("J'aimerai tellement pouvoir lui parler", "I would really like to talk to her"));
+		dialog2.add(him("Mais elle s'est uploadée dans la matrice il y a 2 semaines", "But she uploaded herself in the matrix 2 weeks ago"));
+		dialog2.add(him("Elle m'a trahi en me laissant seul, sans rien dire", "She betrayed me, leaving me alone, saying nothing"));
+		dialog2.add(me("Je vais regarder ce que je peux faire", "I'll see what I can do"));
+		dialog2.add(me("Je te recontacte bientôt", "I will soon recontact you"));
+		dialog2.add(me("En attendant prends déjà cette clé tu l'a bien mérité", "In the meantime take this key has deserved"));
+		dialog2.add(me("Elle te permettra d'accéder au firewall qui renferme ce que tu cherches", "It will allow you to access the firewall that contains what you seek"));
 		dialog2.add(me("#cle1"));
 		dialog2.add(me("-photoex"));
 	}
@@ -59,6 +64,7 @@ public class Ia1 extends NPC implements IState {
 
 	@Override
 	public boolean isState(String state) {
+
 		return states.contains(state);
 	}
 
