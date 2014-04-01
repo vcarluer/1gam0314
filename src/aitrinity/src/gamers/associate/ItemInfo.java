@@ -24,9 +24,9 @@ public class ItemInfo {
 		info.put("casquerv", "A fully working VR helmet");
 		info.put("coupepapier", "A little blade to cut mail");
 		info.put("porte", "The main firewall. I need a key");
-		info.put("ia1", "La première IA trinity");
-		info.put("ia2", "La seconde IA trinity");
-		info.put("ia3", "La troisième IA trinity");
+		info.put("ia1", "The first trinity AI");
+		info.put("ia2", "The second trinity AI");
+		info.put("ia3", "The third trinity AI");
 
 	}
 

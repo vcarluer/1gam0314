@@ -135,6 +135,8 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private Sound moveSound;
 	public Sound selectSound;
 	public Sound music;
+	
+	public int lang = 1; // en - 1 = fr
 
 	@Override
 	public void create() {
@@ -429,6 +431,10 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			fontTitle.draw(batch, "AI TRINITY", - bounds.width / 2f, Gdx.graphics.getHeight() / 4);
 			bounds = fontIntro.getBounds("Press a key");
 			fontIntro.draw(batch, "Press a key", - bounds.width / 2f, - Gdx.graphics.getHeight() / 4);
+			
+			bounds = fontIntro.getBounds("Choose: [E]nglish (poor) - [F]rançais");
+			fontIntro.draw(batch, "Choose: [E]nglish (poor) - [F]rançais", - bounds.width / 2f, - Gdx.graphics.getHeight() / 3);
+			
 			batch.end();
 		}
 		
@@ -759,6 +765,14 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	@Override
 	public boolean keyUp(int keycode) {
 		if (scene == -1) {
+			if (keycode == Input.Keys.E) {
+				lang = 0;
+			}
+			
+			if (keycode == Input.Keys.F) {
+				lang = 1;
+			}
+			
 			scene = 0;
 			return true;
 		}
