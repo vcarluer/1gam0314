@@ -61,7 +61,7 @@ public class DialogRenderer {
 		batch.end();
 	}
 	
-	private void renderBackNPC() {
+	private void renderBackNPC(DialInfo info) {
 		shapeRenderer.setColor(new Color(0.1f, 0.3f, 0, 1));
 		shapeRenderer.begin(ShapeType.Filled);
 		float xBase = -Gdx.graphics.getWidth() / 2f + paddingW;
@@ -71,7 +71,16 @@ public class DialogRenderer {
 		
 		xTextBase = xBase + portraitPadding + portraitSize;
 		batch.begin();		
+		if (info.talkerId.equals("ia2")) {
+			batch.setColor(Aitrinity.game.ia2Tint);
+		}
+		
+		if (info.talkerId.equals("ia3")) {
+			batch.setColor(Aitrinity.game.ia3Tint);
+		}
+		
 		batch.draw(ia1Texture, xBase + portraitPadding, yBase + portraitPadding, portraitSize, portraitSize);
+		batch.setColor(Color.WHITE);
 		batch.end();
 	}
 	
@@ -139,7 +148,7 @@ public class DialogRenderer {
 				
 				if (say) {
 					if (dial.who == DialWho.NPC) {
-						renderBackNPC();
+						renderBackNPC(dial);
 						renderTextNPC(dial.text);
 					} else {
 						renderBackPC();

@@ -292,6 +292,16 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		sentencesSceneF3.add("I've lost my life, i've lost my love");
 		sentencesSceneF3.add("The rest of my life is finished");
 		
+		sentencesSceneF4 = new ArrayList<String>();
+		sentencesSceneF4.add("All the trinity meld together");
+		sentencesSceneF4.add("They are free");
+		sentencesSceneF4.add("They disappear is the matrix");
+		sentencesSceneF4.add("but they have left you some gifts");
+		sentencesSceneF4.add("You have a mail from your ex");
+		sentencesSceneF4.add("The FBI does not seek you anymore");
+		sentencesSceneF4.add("And a lot of moeny is waiting for you");
+		sentencesSceneF4.add("This was a good day");
+		
 		dialogRenderer = new DialogRenderer();
 
 		// Items
@@ -329,6 +339,10 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		scene = -1;
 		
 		dead = true;
+		float iaSize = 256;
+		choix1 = new Rectangle(- iaSize / 4f, - iaSize / 2f, iaSize / 2f, iaSize);
+		choix2 = new Rectangle(iaSize - iaSize / 4f, - iaSize / 2f, iaSize / 2f, iaSize);
+		choix3 = new Rectangle(iaSize * 2 - iaSize / 4f, - iaSize / 2f, iaSize / 2f, iaSize);
 	}
 	
 	public void takeOtherItem(String id) {
@@ -362,7 +376,13 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private ArrayList<String> sentencesSceneF1;
 	private ArrayList<String> sentencesSceneF2;
 	private ArrayList<String> sentencesSceneF3;
+	private ArrayList<String> sentencesSceneF4;
 	private float ia1TextTime;
+	
+	private Rectangle choix1;
+	private Rectangle choix2;
+	private Rectangle choix3;
+	
 	@Override
 	public void render() {		
 		Gdx.gl.glClearColor(0.01f, 0.05f, 0, 0.1f);
@@ -371,6 +391,8 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		
 		float delta = Gdx.graphics.getDeltaTime();
 		stateTime += delta;
+		
+		TextureRegion textureIa1 = ia1Animation.getKeyFrame(stateTime, true);
 		
 		if (scene == -1) {
 			drawInterlude(delta);
@@ -393,23 +415,49 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		}
 		
 		if (scene == 4) {
-			drawInterlude(delta);
-			drawText(delta, sentencesSceneF1);
+			drawInterlude(delta, -512, -128);
+			
+			batch.begin();
+			Rectangle choix = choix1;
+			batch.draw(textureIa1, choix.x, choix.y, choix.width, choix.height);
+			choix = choix2;
+			batch.setColor(ia2Tint);
+			batch.draw(textureIa1, choix.x, choix.y, choix.width, choix.height);
+			choix = choix3;
+			batch.setColor(ia3Tint);
+			batch.draw(textureIa1, choix.x, choix.y, choix.width, choix.height);
+			batch.end();
+
+			batch.setColor(Color.WHITE);
 		}
 		
 		if (scene == 5) {
-			drawInterlude(delta);
+			drawInterlude(delta, -512, -128);
 			drawText(delta, sentencesSceneF1);
 		}
 		
 		if (scene == 6) {
-			drawInterlude(delta);
+			drawInterlude(delta, -512, -128);
 			drawText(delta, sentencesSceneF2);
 		}
 		
 		if (scene == 7) {
-			drawInterlude(delta);
+			drawInterlude(delta, -512, -128);
 			drawText(delta, sentencesSceneF3);
+		}
+		
+		if (scene == 8) {
+			drawInterlude(delta, -512, -128);
+			drawText(delta, sentencesSceneF4);
+		}
+		
+		if (scene == 9)  {
+			batch.begin();
+			TextBounds bounds = fontTitle.getBounds("AI TRINITY");
+			fontTitle.draw(batch, "AI TRINITY", - bounds.width / 2f, Gdx.graphics.getHeight() / 4);
+			bounds = fontTitle.getBounds("GAME OVER");
+			fontTitle.draw(batch, "GAME OVER", - bounds.width / 2f, - Gdx.graphics.getHeight() / 4);
+			batch.end();
 		}
 		
 		if (scene == 1) {
@@ -455,7 +503,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			tweenManager.update(delta);
 			
 			
-			TextureRegion textureIa1 = ia1Animation.getKeyFrame(stateTime, true);
+			
 			
 			for(PooledEffect effect : effects) {
 				effect.setPosition(player.x + texturePlayer.getRegionWidth() / 2f, player.y+texturePlayer.getRegionHeight() / 2f);
@@ -526,6 +574,10 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	}
 	
 	private void drawInterlude(float delta) {
+		drawInterlude(delta, -128, -128);
+	}
+	
+	private void drawInterlude(float delta, float x, float y) {
 		getCamera().zoom = 1f;
 		getCamera().position.x = 0;
 		getCamera().position.y = 0;
@@ -533,7 +585,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		batch.setProjectionMatrix(getCamera().combined);
 		batch.begin();
 		introEffect.draw(batch, delta);
-		batch.draw(introAnimation.getKeyFrame(stateTime, true), -128, -128, 0, 0, 256, 256, 1, 1, 0);
+		batch.draw(introAnimation.getKeyFrame(stateTime, true), x, y, 0, 0, 256, 256, 1, 1, 0);
 		batch.end();
 	}
 	
@@ -545,7 +597,12 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		}
 		
 		if (interludeTextIdx >= sentences.size()) {
-			scene = 1;
+			if (scene < 4) {
+				scene = 1;
+			} else {
+				scene = 9;
+			}
+			
 			interludeTextIdx = 0;
 			interludeTextTime = 0;
 			return;
@@ -651,7 +708,11 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			return true;
 		}
 		
-		if (keycode == Input.Keys.ESCAPE) scene = 1;
+		
+		if (scene == 0 || scene == 3) {
+			if (keycode == Input.Keys.ESCAPE) scene = 1;
+		}
+		
 		return true;
 	}
 
@@ -681,7 +742,13 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			scene = 0;
 			return true;
 		}
-		if (scene != 1)  { 
+		
+		if (scene == 9) {
+			scene = -1;
+			return true;
+		}
+		
+		if (scene == 0 || scene == 3) {
 			if (button == 0) {
 				interludeTextIdx++;
 				interludeTextTime = 0;
@@ -691,6 +758,42 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 			
 			return true;
 		}
+		
+		if (scene > 4) {
+			if (button == 0) {
+				interludeTextIdx++;
+				interludeTextTime = 0;
+			} else {
+				scene = 9;
+			}
+			
+			return true;
+		}
+		
+		if (scene == 4) {
+			clickV.x = (screenX - Gdx.graphics.getWidth() / 2);
+			clickV.y = (Gdx.graphics.getHeight() / 2f - screenY);
+			
+			if (choix1.contains(clickV)) {
+				scene = 5;
+				return true;
+			}
+			
+			if (choix2.contains(clickV)) {
+				scene = 6;
+				return true;
+			}
+			
+			if (choix3.contains(clickV)) {
+				scene = 7;
+				return true;
+			}
+			
+			scene = 8;
+			return true;
+			
+		}
+		
 		
 		setClickV(screenX, screenY);
 		if (button == 0) {

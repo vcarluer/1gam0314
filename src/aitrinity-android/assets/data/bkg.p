@@ -32,7 +32,7 @@ active: false
 - X Offset - 
 active: true
 lowMin: -400.0
-lowMax: 800.0
+lowMax: 2000.0
 highMin: 0.0
 highMax: 0.0
 relative: false
@@ -42,7 +42,7 @@ timelineCount: 1
 timeline0: 0.0
 - Y Offset - 
 active: true
-lowMin: 800.0
+lowMin: 1600.0
 lowMax: 0.0
 highMin: 0.0
 highMax: 0.0
