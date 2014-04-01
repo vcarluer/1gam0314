@@ -40,7 +40,6 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.sun.corba.se.impl.oa.poa.ActiveObjectMap.Key;
 
 public class Aitrinity implements ApplicationListener, InputProcessor, TweenAccessor<Aitrinity> {
 	private OrthographicCamera camera;
@@ -341,7 +340,6 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private String[] sentencesSceneF2;
 	private String[] sentencesSceneF3;
 	private String[] sentencesSceneF4;
-	private float ia1TextTime;
 	
 	private Rectangle choix1;
 	private Rectangle choix2;
@@ -613,12 +611,12 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		sentencesScene3 = TextReader.get("scene3");				
 		sentencesSceneF1 = TextReader.get("sceneF1");				
 		sentencesSceneF = TextReader.get("sceneF");				
-		sentencesSceneFF = TextReader.get("SceneFF");
+		sentencesSceneFF = TextReader.get("sceneFF");
 		
-		sentencesSceneF2 = TextReader.get("SceneF2");
-		sentencesSceneF3 = TextReader.get("SceneF3");
+		sentencesSceneF2 = TextReader.get("sceneF2");
+		sentencesSceneF3 = TextReader.get("sceneF3");
 						
-		sentencesSceneF4 = TextReader.get("SceneF4");
+		sentencesSceneF4 = TextReader.get("sceneF4");
 	}
 	
 	private void drawInterlude(float delta) {
@@ -667,52 +665,6 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		}
 		
 		String text = sentences[interludeTextIdx];
-		TextBounds bounds = fontIntro.getBounds(text);
-		tempRect.x = - bounds.width / 2f;
-		tempRect.y = -300;
-		tempRect.width = bounds.width;
-		tempRect.height = bounds.height;
-		
-		shapeRenderer.setProjectionMatrix(getCamera().combined);
-		shapeRenderer.begin(ShapeType.Filled);
-		shapeRenderer.setColor(new Color(0.4f, 1f, 0, 1f));
-		int padding = 25;
-		shapeRenderer.rect(-Gdx.graphics.getWidth() / 2f + padding, tempRect.y - padding, Gdx.graphics.getWidth() - padding * 2, tempRect.height + padding * 2);
-		shapeRenderer.end();
-		batch.begin();
-		fontIntro.draw(batch, text, tempRect.x, tempRect.y + tempRect.height);
-		batch.end();
-	}
-	
-	private void drawText(float delta, ArrayList<String> sentences) {
-		interludeTextTime+=delta;
-		if (interludeTextTime > interludeTextLife) {
-			interludeTextTime = 0;
-			interludeTextIdx++;
-		}
-		
-		if (interludeTextIdx >= sentences.size()) {
-			interludeTextIdx = 0;
-			interludeTextTime = 0;
-			
-			if (scene < 4) {
-				scene = 1;
-			} else {
-				if (scene > 4 && scene < 40) {
-					scene = 9;
-				} else {
-					if (scene == 4) {
-						interludeTextIdx = sentences.size() - 1;
-					} else {
-						scene = 4;
-					}
-				}
-			}
-
-			return;
-		}
-		
-		String text = sentences.get(interludeTextIdx);
 		TextBounds bounds = fontIntro.getBounds(text);
 		tempRect.x = - bounds.width / 2f;
 		tempRect.y = -300;

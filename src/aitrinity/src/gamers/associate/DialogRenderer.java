@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.Vector2;
 
 public class DialogRenderer {
 	private OrthographicCamera camera;
@@ -21,14 +20,11 @@ public class DialogRenderer {
 	private int fontSize = 25;	
 	int paddingH = 20;
 	int paddingW = 50;
-	int dialogH = 100;
-	private float paddingInH = 5;
+	int dialogH = 100;	
 	private float paddingInW = 10;
 	
-	private boolean optRectInit;
 	private float sayLife = 2f;
 	private float sayTime;
-	private int sayIdx;
 	
 	private AtlasRegion playerTexture;
 	private AtlasRegion ia1Texture;
@@ -101,20 +97,10 @@ public class DialogRenderer {
 		
 	}
 	
-	
-	private Vector2 getCamCorrection(int screenX, int screenY) {
-		Vector2 clickV = new Vector2();
-		clickV.x = (screenX - Gdx.graphics.getWidth() / 2);
-		clickV.y = (Gdx.graphics.getHeight() / 2f - screenY);
-		return clickV;
-	}
-	
-	private DialWho who;
 	public ArrayList<DialInfo> text;
 	private int idx;
 	
 	public void setText(ArrayList<DialInfo> text) {
-		this.who = who;
 		this.text = text;
 		idx = 0;
 		sayTime = 0;

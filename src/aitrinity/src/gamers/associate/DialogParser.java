@@ -12,7 +12,6 @@ public class DialogParser {
 		FileHandle file = Gdx.files.internal("data/dialog/" + stateItem.getId());
 		String dialFull = file.readString("UTF-8");
 		String[] dials = dialFull.split("\r\n");
-		int i = 0;
 		int previousIndent = -1;
 		ArrayList<DialNode> nodeCursor = new ArrayList<DialNode>();		
 		
@@ -112,7 +111,6 @@ public class DialogParser {
 			
 			previousNode = node;
 			previousIndent = indentLevel;
-			i++;
 		}
 		
 		return rootNode;
