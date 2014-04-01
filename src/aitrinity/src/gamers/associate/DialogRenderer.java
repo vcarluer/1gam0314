@@ -133,26 +133,26 @@ public class DialogRenderer {
 			} else {
 				DialInfo dial = text.get(idx);
 				boolean say = true;
-				if (dial.text.startsWith("#")) {
+				if (dial.text.get().startsWith("#")) {
 					say = false;
-					String id = dial.text.substring(1);
+					String id = dial.text.get().substring(1);
 					Aitrinity.game.takeOtherItem(id);
 					Aitrinity.game.setSay(Aitrinity.game.itemInfo.getInfo(id));
 				}
 				
-				if (dial.text.startsWith("-")) {
+				if (dial.text.get().startsWith("-")) {
 					say = false;
-					String id = dial.text.substring(1);
+					String id = dial.text.get().substring(1);
 					Aitrinity.game.removeInventory(id);
 				}
 				
 				if (say) {
 					if (dial.who == DialWho.NPC) {
 						renderBackNPC(dial);
-						renderTextNPC(dial.text);
+						renderTextNPC(dial.text.get());
 					} else {
 						renderBackPC();
-						renderTextPC(dial.text);
+						renderTextPC(dial.text.get());
 					}
 				} else {
 					sayTime = sayLife;

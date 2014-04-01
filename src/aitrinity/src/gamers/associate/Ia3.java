@@ -17,7 +17,7 @@ public class Ia3 extends NPC implements IState {
 		dialog1 = new ArrayList<DialInfo>();
 		dialog2 = new ArrayList<DialInfo>();
 
-		dialog1.add(me("Je veux que tu m'mause"));
+		dialog1.add(me("Je veux que tu m'amuse"));
 		dialog1.add(me("#manche"));
 		
 		
@@ -26,12 +26,12 @@ public class Ia3 extends NPC implements IState {
 		dialog2.add(me("-coupepapier"));
 	}
 	
-	private DialInfo me(String txt) {
-		return new DialInfo("ia3", DialWho.NPC, txt);
+	private DialInfo me(String txtEn, String txtFr) {
+		return new DialInfo("ia1", DialWho.NPC, txtEn, txtFr);
 	}
 	
-	private DialInfo him(String txt) {
-		return new DialInfo("player", DialWho.Player, txt);
+	private DialInfo him(String txtEn, String txtFr) {
+		return new DialInfo("player", DialWho.Player, txtEn, txtFr);
 	}
 
 	private ArrayList<String> states;

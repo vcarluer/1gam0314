@@ -25,12 +25,12 @@ public class Ia2 extends NPC implements IState {
 		dialog2.add(me("-casquerv"));
 	}
 	
-	private DialInfo me(String txt) {
-		return new DialInfo("ia2", DialWho.NPC, txt);
+	private DialInfo me(String txtEn, String txtFr) {
+		return new DialInfo("ia1", DialWho.NPC, txtEn, txtFr);
 	}
 	
-	private DialInfo him(String txt) {
-		return new DialInfo("player", DialWho.Player, txt);
+	private DialInfo him(String txtEn, String txtFr) {
+		return new DialInfo("player", DialWho.Player, txtEn, txtFr);
 	}
 
 	private ArrayList<String> states;

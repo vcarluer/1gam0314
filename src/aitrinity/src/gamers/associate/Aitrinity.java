@@ -131,6 +131,7 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	
 	public Color ia2Tint = new Color(0.9f, 0.3f, 0f, 1f);
 	public Color ia3Tint = new Color(0f, 0.3f, 0.9f, 1f);
+	public Color iaMeldTint = new Color(0.9f, 0.3f, 0.9f, 1f);
 	
 	private Sound moveSound;
 	public Sound selectSound;
@@ -332,13 +333,13 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 	private float interludeTextTime;
 	private int interludeTextIdx = 0;
 	private String[] sentencesScene1;
-	private ArrayList<String> sentencesScene3;
-	private ArrayList<String> sentencesSceneF;
-	private ArrayList<String> sentencesSceneFF;
-	private ArrayList<String> sentencesSceneF1;
-	private ArrayList<String> sentencesSceneF2;
-	private ArrayList<String> sentencesSceneF3;
-	private ArrayList<String> sentencesSceneF4;
+	private String[] sentencesScene3;
+	private String[] sentencesSceneF;
+	private String[] sentencesSceneFF;
+	private String[] sentencesSceneF1;
+	private String[] sentencesSceneF2;
+	private String[] sentencesSceneF3;
+	private String[] sentencesSceneF4;
 	private float ia1TextTime;
 	
 	private Rectangle choix1;
@@ -378,65 +379,16 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		
 		if (scene == 0) {
 			if (!init) {
-				sentencesScene1 = TextReader.get("scene0");
+				sentencesScene1 = TextReader.get("scene0");				
+				sentencesScene3 = TextReader.get("scene3");				
+				sentencesSceneF1 = TextReader.get("sceneF1");				
+				sentencesSceneF = TextReader.get("sceneF");				
+				sentencesSceneFF = TextReader.get("SceneFF");
 				
-				sentencesScene3 = new ArrayList<String>();
-				sentencesScene3.add("I disappeared, humm...");
-				sentencesScene3.add("My avatar has lost himself in matrix flow");
-				sentencesScene3.add("I have to go back quickly");
-				sentencesScene3.add("I have to find the trinity AI");
-
-				sentencesSceneF1 = new ArrayList<String>();
-				sentencesSceneF1.add("The first trinity found her");
-				sentencesSceneF1.add("My ex girl firend here in the matrix");
-				sentencesSceneF1.add("She wants to see me");
-				sentencesSceneF1.add("She wants to see the real me");
-				sentencesSceneF1.add("Not my flesh, not my human feeling");
-				sentencesSceneF1.add("I have to reborn in the matrix");
-				sentencesSceneF1.add("To upload my self");
-				sentencesSceneF1.add("And sacrifice my body");
-				sentencesSceneF1.add("This is where I go");
-				sentencesSceneF1.add("I love her");		
-				
-				sentencesSceneF = new ArrayList<String>();
-				sentencesSceneF.add("Only one can be choosen");
-				sentencesSceneF.add("Only work can tell you what she knows");
-				sentencesSceneF.add("Choose the first and you may get your ex back");
-				sentencesSceneF.add("Choose the second and you may get rid of FBI");
-				sentencesSceneF.add("Choose the thirs and you may be rich");
-				sentencesSceneF.add("You can either choose to not choose");
-				sentencesSceneF.add("So now, what is you choice?");
-				sentencesSceneF.add("Love, security or money");
-				
-				sentencesSceneFF = new ArrayList<String>();
-				sentencesSceneFF.add("Love, security or money");
-				
-
-				sentencesSceneF2 = new ArrayList<String>();
-				sentencesSceneF2.add("The second trinity found my fbi case");
-				sentencesSceneF2.add("All the record are deleted");
-				sentencesSceneF2.add("I'm free again now");
-				sentencesSceneF2.add("I'm going to restart my life");
-				sentencesSceneF2.add("Not everybody have a second chance");
-
-				sentencesSceneF3 = new ArrayList<String>();
-				sentencesSceneF3.add("The third trinity have works well");
-				sentencesSceneF3.add("I have a bank account with millions");
-				sentencesSceneF3.add("But now I'm tracked");
-				sentencesSceneF3.add("Just behind me is the FBI");
-				sentencesSceneF3.add("I know they will catch me soon");
-				sentencesSceneF3.add("I've lost my life, i've lost my love");
-				sentencesSceneF3.add("The rest of my life is finished");
-				
-				sentencesSceneF4 = new ArrayList<String>();
-				sentencesSceneF4.add("All the trinity meld together");
-				sentencesSceneF4.add("They are free");
-				sentencesSceneF4.add("They disappear is the matrix");
-				sentencesSceneF4.add("but they have left you some gifts");
-				sentencesSceneF4.add("You have a mail from your ex");
-				sentencesSceneF4.add("The FBI does not seek you anymore");
-				sentencesSceneF4.add("And a lot of moeny is waiting for you");
-				sentencesSceneF4.add("This was a good day");
+				sentencesSceneF2 = TextReader.get("SceneF2");
+				sentencesSceneF3 = TextReader.get("SceneF3");
+								
+				sentencesSceneF4 = TextReader.get("SceneF4");
 			}
 			
 			drawInterlude(delta);
@@ -484,21 +436,41 @@ public class Aitrinity implements ApplicationListener, InputProcessor, TweenAcce
 		
 		if (scene == 5) {
 			drawInterlude(delta, -512, -128);
+			batch.begin();
+			Rectangle choix = choix1;
+			batch.draw(textureIa1, choix.x, choix.y, choix.width, choix.height);
+			batch.end();
 			drawText(delta, sentencesSceneF1);
 		}
 		
 		if (scene == 6) {
 			drawInterlude(delta, -512, -128);
+			batch.begin();			
+			Rectangle choix = choix2;
+			batch.setColor(ia2Tint);
+			batch.draw(textureIa1, choix.x, choix.y, choix.width, choix.height);
+			batch.end();
+			
 			drawText(delta, sentencesSceneF2);
 		}
 		
 		if (scene == 7) {
 			drawInterlude(delta, -512, -128);
+			batch.begin();
+			Rectangle choix = choix3;
+			batch.setColor(ia3Tint);
+			batch.draw(textureIa1, choix.x, choix.y, choix.width, choix.height);
+			batch.end();
 			drawText(delta, sentencesSceneF3);
 		}
 		
 		if (scene == 8) {
 			drawInterlude(delta, -512, -128);
+			batch.begin();			
+			Rectangle choix = choix2;
+			batch.setColor(iaMeldTint);
+			batch.draw(textureIa1, choix.x, choix.y, choix.width, choix.height);
+			batch.end();
 			drawText(delta, sentencesSceneF4);
 		}
 		
